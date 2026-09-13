@@ -2,6 +2,10 @@
 
 Always means using the most correct, most modern, most powerful tool for the job. There is no such thing as overkill.
 
+## Structure
+
+- Use module implementation partition units, not module implementation units, to implement thiungs declared in the interface
+
 ## Performance
 
 - Annotate hot functions with `[[gnu::hot]]`

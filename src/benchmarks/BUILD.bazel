@@ -1,0 +1,16 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
+package(default_visibility = ["//docs:__pkg__"])
+
+cc_binary(
+    name = "hash_maps",
+    module_interfaces = ["hash_maps/mod.cppm"],
+    deps = [
+        "@abseil-cpp//absl/container:flat_hash_map",
+        "@boost.unordered",
+        "@google_benchmark//:benchmark",
+        "@google_benchmark//:benchmark_main",
+        "@llvm-project//llvm:Support",
+        "@std_module",
+    ],
+)

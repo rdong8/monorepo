@@ -5,9 +5,11 @@ common --write_command_log
 build --verbose_failures
 
 # TODO(llvm-libc): need to undef _FORTIFY_SOURCE because glibc's fortified headers wrap some functions in inline overloads with internal linkage, which it then tries to export from a module
+# Disable layering_check (activated by preset.bazelrc) since it uses Clang modules, which are disabled when cpp_modules is enabled
 build \
     --cxxopt=-U_FORTIFY_SOURCE \
     --experimental_cpp_modules \
+    --features=-layering_check \
     --features=cpp_modules
 
 build \

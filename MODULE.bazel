@@ -26,30 +26,33 @@ bazel_dep(name = "bazel_skylib", version = "1.9.2")
 bazel_dep(name = "bazelrc-preset.bzl", version = "1.9.2")
 bazel_dep(name = "boost", version = "1.90.0.bcr.2")
 bazel_dep(name = "boost.cobalt", version = "1.90.0.bcr.1")
+bazel_dep(name = "boost.unordered", version = "1.90.0.bcr.1")
 bazel_dep(name = "cpptrace", version = "1.0.4.bcr.1")
 bazel_dep(name = "google_benchmark", version = "1.9.5")
 bazel_dep(name = "googletest", version = "1.18.0.bcr.1")
+bazel_dep(name = "llvm", version = "0.8.19")  # See llvm-project/utils/bazel/MODULE.bazel
 bazel_dep(name = "magic_enum", version = "0.9.8")
 bazel_dep(name = "platforms", version = "1.1.0")
 bazel_dep(name = "quill", version = "13.1.0")
 bazel_dep(name = "rules_cc", version = "0.2.22")
+bazel_dep(name = "rules_python", version = "2.3.3")
 bazel_dep(name = "rules_shell", version = "0.8.0")
-bazel_dep(name = "toolchains_llvm")
-bazel_dep(name = "zlib-ng", version = "2.3.3", repo_name = "llvm_zlib")
-bazel_dep(name = "zstd", version = "1.5.7.bcr.1", repo_name = "llvm_zstd")
+bazel_dep(name = "toolchains_llvm", version = "1.9.0")
+bazel_dep(name = "zlib-ng", version = "2.3.3.bcr.2", repo_name = "llvm_zlib")  # See llvm-project/utils/bazel/MODULE.bazel
+bazel_dep(name = "zstd", version = "1.5.7.bcr.1", repo_name = "llvm_zstd")  # See llvm-project/utils/bazel/MODULE.bazel
 
 ## rules_cc
 git_override(
     module_name = "rules_cc",
-    commit = "c1ba7a0d5a5f51f6539eb94f32ef8d9fedd0250d",
+    commit = "6ce71cf3a76d931958141a430327ecbae688a903",
     remote = "https://github.com/rdong8/rules_cc",
 )
 
 ## quill
 git_override(
     module_name = "quill",
-    commit = "be8099d1fc7fe121a36d18c6ffcda9fa3469cc91",
-    remote = "https://github.com/rdong8/quill",
+    commit = "6fcd9c01d303acd613d64aca5fe0c084a87a50ac",
+    remote = "https://github.com/odygrd/quill",
 )
 
 ## toolchains_llvm
@@ -76,15 +79,15 @@ register_toolchains("@llvm_toolchain//:all")
 bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
 bazel_dep(name = "rules_doxygen", version = "2.6.4", dev_dependency = True)
 
-# hedron_compile_commands
-# TODO: use https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2977r1.html
+## hedron_compile_commands
+## TODO: use https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2977r1.html
 git_override(
     module_name = "hedron_compile_commands",
     commit = "a3ea4aa87b4539b3d6e356f49b3eb81f593e5656",
     remote = "https://github.com/rdong8/bazel-compile-commands-extractor",
 )
 
-# rules_doxygen
+## rules_doxygen
 
 git_override(
     module_name = "rules_doxygen",
