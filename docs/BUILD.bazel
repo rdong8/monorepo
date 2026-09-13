@@ -29,6 +29,7 @@ doxygen(
     disable_index = False,
     distribute_group_doc = True,
     dot_image_format = "svg",
+    exclude_patterns = ["*/external/*"],
     extension_mapping = ["cppm=C++"],
     extract_all = True,
     file_patterns = [
@@ -39,6 +40,7 @@ doxygen(
     ],
     full_sidebar = False,
     generate_html = True,
+    generate_latex = False,
     generate_treeview = True,
     hide_friend_compounds = True,
     hide_in_body_docs = True,
@@ -58,7 +60,10 @@ doxygen(
     use_mathjax = True,
     use_mdfile_as_mainpage = "README.md",
     warn_if_undocumented = False,
-    deps = ["//src/tmp"],
+    deps = [
+        "//src/library_usage",
+        "//src/tmp",
+    ],
 )
 
 filegroup(
