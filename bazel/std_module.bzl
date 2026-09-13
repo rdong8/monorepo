@@ -21,11 +21,9 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "std",
-    features = ["cpp_modules"],
     srcs = glob(["std/*.inc"]),
     module_interfaces = ["std.cppm"],
-    # Need to undef _FORTIFY_SOURCE because glibc's fortified headers wrap some functions in inline overloads with internal linkage, which it then tries to export from a module
-    copts = ["-Wno-reserved-module-identifier", "-U_FORTIFY_SOURCE"],
+    copts = ["-Wno-reserved-module-identifier"],
 )
 
 cc_library(

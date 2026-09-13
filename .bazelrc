@@ -4,7 +4,9 @@ common --write_command_log
 
 build --verbose_failures
 
+# TODO(llvm-libc): need to undef _FORTIFY_SOURCE because glibc's fortified headers wrap some functions in inline overloads with internal linkage, which it then tries to export from a module
 build \
+    --cxxopt=-U_FORTIFY_SOURCE \
     --experimental_cpp_modules \
     --features=cpp_modules
 
