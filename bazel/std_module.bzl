@@ -43,7 +43,7 @@ std_module_repo = repository_rule(
     },
 )
 
-def _std_module_extension_impl(mctx):
+def _std_module_extension_impl(_mctx):
     std_module_repo(name = "std_module")
 
 std_module = module_extension(
