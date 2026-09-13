@@ -59,6 +59,7 @@ RUN cat <<EOF >${BREWFILE}
   brew "helix"
   brew "jq"
   brew "just"
+  brew "lldb"
   brew "prek"
   brew "ripgrep"
   brew "terror/tap/just-lsp", trusted: true

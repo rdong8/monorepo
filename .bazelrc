@@ -4,7 +4,9 @@ common --write_command_log
 
 build --verbose_failures
 
-build --experimental_cpp_modules
+build \
+    --experimental_cpp_modules \
+    --features=cpp_modules
 
 build \
     --copt=-fvisibility=hidden \
@@ -12,9 +14,6 @@ build \
 
 # TODO: https://github.com/bazel-contrib/toolchains_llvm/issues/592
 build --conlyopt=-std=c23
-
-# TODO(cpp20-modules): Can't compile std with --config=opt without this
-build --force_pic
 
 build --linkopt=-Wl,-fatal-warnings
 

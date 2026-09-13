@@ -24,6 +24,20 @@ bazel_dep(name = "rules_cc", version = "0.2.22")
 bazel_dep(name = "rules_shell", version = "0.8.0")
 bazel_dep(name = "toolchains_llvm")
 
+## rules_cc
+git_override(
+    module_name = "rules_cc",
+    commit = "6ce71cf3a76d931958141a430327ecbae688a903",
+    remote = "https://github.com/rdong8/rules_cc",
+)
+
+## quill
+git_override(
+    module_name = "quill",
+    commit = "be8099d1fc7fe121a36d18c6ffcda9fa3469cc91",
+    remote = "https://github.com/rdong8/quill",
+)
+
 ## toolchains_llvm
 
 git_override(
@@ -42,13 +56,6 @@ llvm.toolchain(
 use_repo(llvm, "llvm_toolchain", "llvm_toolchain_llvm")
 
 register_toolchains("@llvm_toolchain//:all")
-
-## quill
-git_override(
-    module_name = "quill",
-    commit = "be8099d1fc7fe121a36d18c6ffcda9fa3469cc91",
-    remote = "https://github.com/rdong8/quill",
-)
 
 # Dev dependencies
 

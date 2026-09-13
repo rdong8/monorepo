@@ -7,7 +7,6 @@ package(default_visibility = [
 
 cc_library(
     name = "library_usage.mathematics",
-    features = ["cpp_modules"],
     module_interfaces = ["mathematics/mod.cppm"],
     deps = [
         "@quill//:quill_module",
@@ -18,7 +17,6 @@ cc_library(
 cc_binary(
     name = "library_usage",
     srcs = ["main.cpp"],
-    features = ["cpp_modules"],
     deps = [
         ":library_usage.mathematics",
         "@boost.cobalt",
