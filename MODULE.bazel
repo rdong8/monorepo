@@ -27,7 +27,7 @@ bazel_dep(name = "toolchains_llvm")
 ## rules_cc
 git_override(
     module_name = "rules_cc",
-    commit = "6ce71cf3a76d931958141a430327ecbae688a903",
+    commit = "c1ba7a0d5a5f51f6539eb94f32ef8d9fedd0250d",
     remote = "https://github.com/rdong8/rules_cc",
 )
 
