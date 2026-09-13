@@ -63,7 +63,10 @@ Person const person{.name{"Richard"}, .age = 22};
 Note the following edge cases:
 
 ```cpp
-// For MILs, always use direct initialization
+// When trying to avoid an initializer list ctor, it is acceptable to use copy initialization
+std::vector<std::size_t> ones(100UZ, 1UZ);
+
+// For MILs, always use direct initialization except to avoid initializer list ctors
 Buffer::Buffer()
     : data{}
     , size{100UZ}
@@ -76,9 +79,6 @@ Buffer::Buffer()
 // Correct way:
 std::string const name{"Richard"};
 std::string const default_name{};
-
-// When trying to avoid an initializer list ctor, it is acceptable to use copy initialization
-std::vector<std::size_t> ones(100UZ, 1UZ);
 
 // Consequence of the rule: implicit conversions are NOT allowed
 // WRONG: initializing from expression but not using `auto`
