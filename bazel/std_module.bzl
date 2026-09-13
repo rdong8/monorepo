@@ -3,17 +3,17 @@ Provides the C++23 standard library module repository rule and module extension.
 See: https://github.com/igormcoelho/rules_cpp23_modules/tree/main/demo9
 """
 
-def _std_module_repo_impl(rctx):
-    llvm_build_file = rctx.path(rctx.attr.llvm_repo)
+def _std_module_repo_impl(repo_context):
+    llvm_build_file = repo_context.path(repo_context.attr.llvm_repo)
     libcxx_dir = llvm_build_file.dirname.get_child("share").get_child("libc++").get_child("v1")
 
     if not libcxx_dir.exists:
         fail("libc++ module directory not found at: %s" % libcxx_dir)
 
-    rctx.symlink(libcxx_dir.get_child("std.cppm"), "std.cppm")
-    rctx.symlink(libcxx_dir.get_child("std"), "std")
+    repo_context.symlink(libcxx_dir.get_child("std.cppm"), "std.cppm")
+    repo_context.symlink(libcxx_dir.get_child("std"), "std")
 
-    rctx.file(
+    repo_context.file(
         "BUILD.bazel",
         content = """\
 load("@rules_cc//cc:defs.bzl", "cc_library")
@@ -42,7 +42,7 @@ std_module_repo = repository_rule(
     },
 )
 
-def _std_module_extension_impl(_mctx):
+def _std_module_extension_impl(_module_context):
     std_module_repo(name = "std_module")
 
 std_module = module_extension(

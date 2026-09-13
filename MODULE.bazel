@@ -7,6 +7,18 @@ module(
 std_module = use_extension("//bazel:std_module.bzl", "std_module")
 use_repo(std_module, "std_module")
 
+# LLVM raw
+
+llvm_raw_deps = use_extension("//bazel:llvm.bzl", "llvm_raw_deps")
+use_repo(llvm_raw_deps, "llvm-raw")
+
+llvm_configure = use_repo_rule("@llvm-raw//utils/bazel:configure.bzl", "llvm_configure")
+
+llvm_configure(
+    name = "llvm-project",
+    targets = ["X86"],
+)
+
 # Dependencies
 
 bazel_dep(name = "abseil-cpp", version = "20260817.0")
@@ -23,6 +35,8 @@ bazel_dep(name = "quill", version = "13.1.0")
 bazel_dep(name = "rules_cc", version = "0.2.22")
 bazel_dep(name = "rules_shell", version = "0.8.0")
 bazel_dep(name = "toolchains_llvm")
+bazel_dep(name = "zlib-ng", version = "2.3.3", repo_name = "llvm_zlib")
+bazel_dep(name = "zstd", version = "1.5.7.bcr.1", repo_name = "llvm_zstd")
 
 ## rules_cc
 git_override(
