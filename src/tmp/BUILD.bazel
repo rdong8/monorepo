@@ -1,7 +1,5 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary")
 
-package(default_visibility = ["//docs:__pkg__"])
-
 cc_binary(
     name = "tmp",
     srcs = ["main.cpp"],
