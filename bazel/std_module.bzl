@@ -6,6 +6,7 @@ See: https://github.com/igormcoelho/rules_cpp23_modules/tree/main/demo9
 def _std_module_repo_impl(rctx):
     llvm_build_file = rctx.path(rctx.attr.llvm_repo)
     libcxx_dir = llvm_build_file.dirname.get_child("share").get_child("libc++").get_child("v1")
+
     if not libcxx_dir.exists:
         fail("libc++ module directory not found at: %s" % libcxx_dir)
 
