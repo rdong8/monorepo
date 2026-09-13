@@ -1,0 +1,10 @@
+{
+    "mcpServers": {
+        "compiler-explorer": {
+            "serverUrl": "https://godbolt.org/mcp"
+        },
+        "lldb": {
+            "command": "lldb-mcp"
+        }
+    }
+}

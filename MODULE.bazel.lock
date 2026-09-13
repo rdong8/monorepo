@@ -419,7 +419,7 @@
   "moduleExtensions": {
     "//bazel:std_module.bzl%std_module": {
       "general": {
-        "bzlTransitiveDigest": "JX5ZJXb1zbIWBRUXSj79gIJCbm3Fa4PAGhIHQo8ibxU=",
+        "bzlTransitiveDigest": "NPJF6RQ4rzNX/dcNv5DFpfa0zGhE2JY3C1vuYqCKqQ0=",
         "usagesDigest": "FVHnJNwi2TIqAc82kJxbtfCpQiTn6ZYFcjbpwEKofWo=",
         "recordedInputs": [
           "REPO_MAPPING:,llvm_toolchain_llvm toolchains_llvm++llvm+llvm_toolchain_llvm"

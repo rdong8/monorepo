@@ -15,6 +15,9 @@ initialize-host:
 bazel-completions:
     bazelisk completion fish > ~/.config/fish/completions/bazelisk.fish
 
+skills:
+    gh skill install intel/intel-performance-skills --scope user
+
 [private]
 bazel cmd *targets=targets:
     bazel \
