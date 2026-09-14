@@ -1,0 +1,20 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+package(default_visibility = [
+    "//docs:__pkg__",
+    "//src:__subpackages__",
+])
+
+cc_library(
+    name = "utility",
+    implementation_deps = [
+        "@cpptrace",
+        "@llvm-project//llvm:Support",
+        "@std_module",
+    ],
+    module_interfaces = [
+        "mod.cppm",
+        "print.cppm",
+        "stacktrace.cppm",
+    ],
+)
