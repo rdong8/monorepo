@@ -59,6 +59,7 @@ pre-commit-update:
 
 clean *args:
     bazel clean {{ args }}
+    rm -rf .Trash-*
 
 update-submodules:
     git submodule update --init --recursive --remote
