@@ -8,9 +8,10 @@ module;
 export module toy:parser;
 
 import std;
-import utility;
+
 import :ast;
 import :lexer;
+import utility;
 
 export namespace toy
 {

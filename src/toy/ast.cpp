@@ -12,9 +12,10 @@ module;
 module toy:ast.impl;
 
 import std;
-import utility;
+
 import :ast;
 import :lexer;
+import utility;
 
 namespace toy
 {

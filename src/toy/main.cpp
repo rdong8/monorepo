@@ -5,8 +5,9 @@
 #include <llvm/Support/raw_ostream.h>
 
 import std;
-import utility;
+
 import toy;
+import utility;
 
 namespace cl = llvm::cl;
 
