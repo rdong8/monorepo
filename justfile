@@ -63,3 +63,6 @@ clean *args:
 
 update-submodules:
     git submodule update --init --recursive --remote
+
+loc *args:
+    cloc --vcs="git ls-files --cached --others --exclude-standard" {{ args }}

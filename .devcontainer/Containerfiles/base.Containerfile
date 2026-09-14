@@ -50,6 +50,7 @@ ARG BREWFILE
 RUN cat <<EOF >${BREWFILE}
   brew "bat"
   brew "btop"
+  brew "cloc"
   brew "eza"
   brew "fastfetch"
   brew "fd"
