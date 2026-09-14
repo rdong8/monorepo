@@ -4,6 +4,7 @@ package(default_visibility = ["//visibility:private"])
 
 cc_test(
     name = "utility",
+    size = "small",
     srcs = ["utility.cpp"],
     # llvm-project and cpptrace both bring in their own libunwinds internally, for complicated reasons this causes a link-time symbol collision when dynamic linking
     linkstatic = True,

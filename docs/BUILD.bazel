@@ -1,3 +1,5 @@
+# TODO(docs): https://registry.bazel.build/modules/doxygen?
+
 load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 load("@doxygen//:doxygen.bzl", "doxygen")
 load("@rules_shell//shell:sh_binary.bzl", "sh_binary")

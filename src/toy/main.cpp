@@ -53,7 +53,7 @@ auto parse_input_file(llvm::StringRef filename) -> toy::ASTPtr<toy::ModuleAST>
 
 } // namespace
 
-auto main(int argc, char *argv[argc]) -> int
+auto main(int argc, char *argv[]) -> int
 {
     cl::ParseCommandLineOptions(argc, argv, "toy compiler\n");
 
