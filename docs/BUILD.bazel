@@ -62,7 +62,6 @@ doxygen(
     warn_if_undocumented = False,
     deps = [
         "//src/library_usage",
-        "//src/tmp",
     ],
 )
 
