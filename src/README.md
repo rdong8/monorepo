@@ -1,6 +1,6 @@
 # Demos
 
-This directory contains several demo projects that illustrate how to use some of the trickier features of C++/CMake.
+This directory contains several demo projects that illustrate how to use some of the trickier features of C++/Bazel.
 
 ## Benchmarks
 
