@@ -20,16 +20,16 @@ enum class Action : std::uint8_t
 };
 
 cl::opt<std::string> const input_filename{
-    cl::Positional,               //
-    cl::desc{"<input toy file>"}, //
-    cl::init("-"),                //
-    cl::value_desc{"filename"},   //
+    cl::Positional,
+    cl::desc{"<input toy file>"},
+    cl::init("-"),
+    cl::value_desc{"filename"},
 };
 
 cl::opt<Action> const emit_action{
-    "emit",                                                                //
-    cl::desc{"Select the kind of output desired"},                         //
-    cl::values(clEnumValN(Action::DumpAST, "ast", "output the AST dump")), //
+    "emit",
+    cl::desc{"Select the kind of output desired"},
+    cl::values(clEnumValN(Action::DumpAST, "ast", "output the AST dump")),
 };
 
 [[nodiscard]]
@@ -52,7 +52,7 @@ auto parse_input_file(llvm::StringRef filename) -> toy::ASTPtr<toy::ModuleAST>
 
 } // namespace
 
-auto main(int argc, char *argv[]) -> int
+auto main(int argc, char *argv[argc]) -> int
 {
     cl::ParseCommandLineOptions(argc, argv, "toy compiler\n");
 

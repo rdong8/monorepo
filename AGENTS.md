@@ -155,7 +155,7 @@ If you want to group statements by concern, use a block or immediately invoked l
 
 ### Other
 
-- Always use the explicit object parameter/deducing this
+- Always use the explicit object parameter/deducing this, or `this` in virtual functions/ctor bodies where it isn't available
 - There's a clang-format pre-commit hook. You never need to run it manually.
 
 ## Bazel

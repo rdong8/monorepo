@@ -335,6 +335,7 @@ class Parser final
     {
         auto const token_value = std::to_underlying(self.lexer.get_current_token());
 
+        // NOLINTBEGIN(*magic-numbers)
         if (token_value < 0 || token_value > 127)
         {
             return -1;
@@ -357,6 +358,7 @@ class Parser final
                 return -1;
             }
         }
+        // NOLINTEND(*magic-numbers)
     }
 
     /// Recursively parse RHS of binary expression

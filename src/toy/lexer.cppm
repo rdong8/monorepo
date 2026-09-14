@@ -28,6 +28,7 @@ struct Location
     Position column{};
 };
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class Token : Character
 {
     Semicolon = ';',
@@ -332,7 +333,7 @@ class LexerBuffer final : public Lexer
 
     [[nodiscard]] auto read_next_line() -> llvm::StringRef override
     {
-        auto const *const begin = current;
+        auto const *const begin = this->current;
 
         while (this->current < this->end && *this->current != '\0' && *this->current != '\n')
         {
