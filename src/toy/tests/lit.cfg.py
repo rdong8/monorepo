@@ -1,65 +1,24 @@
 import os
-import platform
-import re
-import subprocess
-import tempfile
-
 import lit.formats
-import lit.util
+import lit.llvm
+from lit.llvm.subst import ToolSubst
 
-from lit.llvm import llvm_config
-from lit.llvm.subst import FindTool, ToolSubst
-
-# Configuration file for the 'lit' test runner.
-
-# name: The name of this test suite.
-config.name = "TOY"
-
-config.test_format = lit.formats.ShTest(not llvm_config.use_lit_shell)
-
-# suffixes: A list of file extensions to treat as test files.
-config.suffixes = [".mlir", ".toy"]
-
-# test_source_root: The root path where tests are located.
+config.name = "toy"
+config.test_format = lit.formats.ShTest()
+config.suffixes = [".toy"]
 config.test_source_root = os.path.dirname(__file__)
+config.test_exec_root = os.environ.get("TEST_UNDECLARED_OUTPUTS_DIR", config.test_source_root)
 
-# test_exec_root: The root path where tests should be run.
-config.test_exec_root = os.path.join(config.toy_obj_root, "test")
-
-config.substitutions.append(("%PATH%", config.environment["PATH"]))
-config.substitutions.append(("%shlibext", config.llvm_shlib_ext))
-
-llvm_config.with_system_environment(["HOME", "INCLUDE", "LIB", "TMP", "TEMP"])
-
-llvm_config.use_default_substitutions()
-
-# excludes: A list of directories to exclude from the testsuite. The 'Inputs'
-# subdirectories contain auxiliary inputs for various tests in their parent
-# directories.
-config.excludes = ["CMakeLists.txt"]
-
-# test_exec_root: The root path where tests should be run.
-config.test_exec_root = os.path.join(config.toy_obj_root, "test")
-config.toy_tools_dir = os.path.join(config.toy_obj_root, "bin")
-config.toy_libs_dir = os.path.join(config.toy_obj_root, "lib")
-
-config.substitutions.append(("%toy_libs", config.toy_libs_dir))
-
-# Tweak the PATH to include the tools dir.
-llvm_config.with_environment("PATH", config.llvm_tools_dir, append_path=True)
+lit.llvm.initialize(lit_config, config)
+lit.llvm.llvm_config.use_default_substitutions()
 
 tool_dirs = [config.toy_tools_dir, config.llvm_tools_dir]
+for directory in tool_dirs:
+    lit.llvm.llvm_config.with_environment("PATH", directory, append_path=True)
+
 tools = [
-    "mlir-opt",
-    "toy-capi-test",
-    "toy-opt",
-    "toy-translate",
+    ToolSubst("toyc", os.path.join(config.toy_tools_dir, "toyc"), unresolved="fatal"),
+    ToolSubst("FileCheck", os.path.join(config.llvm_tools_dir, "FileCheck"), unresolved="fatal"),
 ]
 
-llvm_config.add_tool_substitutions(tools, tool_dirs)
-
-python_path = [os.path.join(config.mlir_obj_dir, "python_packages", "toy")]
-if "PYTHONPATH" in os.environ:
-    python_path += [os.environ["PYTHONPATH"]]
-
-llvm_config.with_environment("PYTHONPATH", python_path, append_path=True)
+lit.llvm.llvm_config.add_tool_substitutions(tools, tool_dirs)

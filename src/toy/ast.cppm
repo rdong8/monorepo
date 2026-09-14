@@ -1,5 +1,3 @@
-/// @module toyc.parser.ast
-
 module;
 
 #include <experimental/propagate_const>
@@ -7,14 +5,15 @@ module;
 #include <llvm/ADT/ArrayRef.h>
 #include <llvm/ADT/SmallVector.h>
 #include <llvm/ADT/StringRef.h>
+#include <llvm/Support/raw_ostream.h>
 
-export module toyc.parser.ast;
-
-import toyc.lexer;
+export module toy:ast;
 
 import std;
 
-export namespace toyc
+import :lexer;
+
+export namespace toy
 {
 
 using Dimension = std::int64_t;
@@ -44,7 +43,7 @@ class ExprAST
 
     ExprAST(Kind kind, Location location)
         : kind{kind}
-        , location{std::move(location)}
+        , location_info{std::move(location)}
     {
     }
 
@@ -59,12 +58,12 @@ class ExprAST
     [[nodiscard]]
     auto loc(this Self const &self) -> Location const &
     {
-        return self.location;
+        return self.location_info;
     }
 
   private:
     Kind kind;
-    Location location;
+    Location location_info;
 };
 
 template <typename T> using ASTPtr = std::experimental::propagate_const<std::unique_ptr<T>>;
@@ -79,9 +78,9 @@ class NumberExprAST final : public ExprAST
 
   public:
     [[nodiscard]]
-    static auto classof(ExprAST const *c) -> bool
+    static auto classof(ExprAST const *expr) -> bool
     {
-        return c->get_kind() == Kind::Num;
+        return expr->get_kind() == Kind::Num;
     }
 
     NumberExprAST(Location location, Value value)
@@ -109,15 +108,15 @@ class LiteralExprAST final : public ExprAST
     using Values = std::vector<ASTPtr<ExprAST>>;
 
     [[nodiscard]]
-    static auto classof(ExprAST const *c) -> bool
+    static auto classof(ExprAST const *expr) -> bool
     {
-        return c->get_kind() == Kind::Literal;
+        return expr->get_kind() == Kind::Literal;
     }
 
-    LiteralExprAST(Location location, Values values, Shape dims)
+    LiteralExprAST(Location location, Values values, Shape dimensions)
         : ExprAST{Kind::Literal, std::move(location)}
         , values{std::move(values)}
-        , dims{std::move(dims)}
+        , dimensions{std::move(dimensions)}
     {
     }
 
@@ -130,12 +129,12 @@ class LiteralExprAST final : public ExprAST
     [[nodiscard]]
     auto get_dims(this Self const &self) -> llvm::ArrayRef<Dimension>
     {
-        return self.dims;
+        return self.dimensions;
     }
 
   private:
     Values values;
-    Shape dims;
+    Shape dimensions;
 };
 
 /// Expression class for referencing a variable, like "a"
@@ -145,9 +144,9 @@ class VariableExprAST final : public ExprAST
 
   public:
     [[nodiscard]]
-    static auto classof(ExprAST const *c) -> bool
+    static auto classof(ExprAST const *expr) -> bool
     {
-        return c->get_kind() == Kind::Var;
+        return expr->get_kind() == Kind::Var;
     }
 
     VariableExprAST(Location location, std::string name)
@@ -173,9 +172,9 @@ class VarDeclExprAST final : public ExprAST
 
   public:
     [[nodiscard]]
-    static auto classof(ExprAST const *c) -> bool
+    static auto classof(ExprAST const *expr) -> bool
     {
-        return c->get_kind() == Kind::VarDecl;
+        return expr->get_kind() == Kind::VarDecl;
     }
 
     VarDeclExprAST(Location location, std::string name, VarType type, ASTPtr<ExprAST> initial_value)
@@ -217,25 +216,25 @@ class ReturnExprAST final : public ExprAST
 
   public:
     [[nodiscard]]
-    static auto classof(ExprAST const *c) -> bool
+    static auto classof(ExprAST const *expr) -> bool
     {
-        return c->get_kind() == Kind::Return;
+        return expr->get_kind() == Kind::Return;
     }
 
-    ReturnExprAST(Location location, ASTPtr<ExprAST> expr)
+    ReturnExprAST(Location location, ASTPtr<ExprAST> expression)
         : ExprAST{Kind::Return, std::move(location)}
-        , expr{std::move(expr)}
+        , expression{std::move(expression)}
     {
     }
 
     [[nodiscard]]
     auto get_expr(this Self const &self) -> ExprAST const *
     {
-        return self.expr.get();
+        return self.expression.get();
     }
 
   private:
-    ASTPtr<ExprAST> expr;
+    ASTPtr<ExprAST> expression;
 };
 
 /// Expression class for binary operator
@@ -245,9 +244,9 @@ class BinaryExprAST final : public ExprAST
 
   public:
     [[nodiscard]]
-    static auto classof(ExprAST const *c) -> bool
+    static auto classof(ExprAST const *expr) -> bool
     {
-        return c->get_kind() == Kind::BinOp;
+        return expr->get_kind() == Kind::BinOp;
     }
 
     BinaryExprAST(Location location, char op, ASTPtr<ExprAST> lhs, ASTPtr<ExprAST> rhs)
@@ -278,7 +277,8 @@ class BinaryExprAST final : public ExprAST
 
   private:
     char op;
-    ASTPtr<ExprAST> lhs, rhs;
+    ASTPtr<ExprAST> lhs;
+    ASTPtr<ExprAST> rhs;
 };
 
 /// Expression class for function calls
@@ -290,15 +290,15 @@ class CallExprAST final : public ExprAST
     using Args = std::vector<ASTPtr<ExprAST>>;
 
     [[nodiscard]]
-    static auto classof(ExprAST const *c) -> bool
+    static auto classof(ExprAST const *expr) -> bool
     {
-        return c->get_kind() == Kind::Call;
+        return expr->get_kind() == Kind::Call;
     }
 
-    CallExprAST(Location location, std::string callee, Args args)
+    CallExprAST(Location location, std::string callee, Args arguments)
         : ExprAST{Kind::Call, std::move(location)}
         , callee{std::move(callee)}
-        , args{std::move(args)}
+        , arguments{std::move(arguments)}
     {
     }
 
@@ -311,12 +311,12 @@ class CallExprAST final : public ExprAST
     [[nodiscard]]
     auto get_args(this Self const &self) -> llvm::ArrayRef<ASTPtr<ExprAST>>
     {
-        return self.args;
+        return self.arguments;
     }
 
   private:
     std::string callee;
-    Args args;
+    Args arguments;
 };
 
 /// Expression class for builtin print calls
@@ -326,29 +326,28 @@ class PrintExprAST final : public ExprAST
 
   public:
     [[nodiscard]]
-    static auto classof(ExprAST const *c) -> bool
+    static auto classof(ExprAST const *expr) -> bool
     {
-        return c->get_kind() == Kind::Print;
+        return expr->get_kind() == Kind::Print;
     }
 
-    PrintExprAST(Location location, ASTPtr<ExprAST> arg)
+    PrintExprAST(Location location, ASTPtr<ExprAST> argument)
         : ExprAST{Kind::Print, std::move(location)}
-        , arg{std::move(arg)}
+        , argument{std::move(argument)}
     {
     }
 
     [[nodiscard]]
     auto get_arg(this Self const &self) -> ExprAST const *
     {
-        return self.arg.get();
+        return self.argument.get();
     }
 
   private:
-    ASTPtr<ExprAST> arg;
+    ASTPtr<ExprAST> argument;
 };
 
-/// This class represents the "prototype" of a fucntion, which captures its name and argument names (thus implicitly the
-/// number of arguments the function takes)
+/// Represents the prototype of a function
 class PrototypeAST final
 {
     using Self = PrototypeAST;
@@ -356,17 +355,17 @@ class PrototypeAST final
   public:
     using Args = std::vector<ASTPtr<VariableExprAST>>;
 
-    PrototypeAST(Location location, std::string name, Args args)
-        : location{std::move(location)}
+    PrototypeAST(Location location, std::string name, Args arguments)
+        : location_info{std::move(location)}
         , name{std::move(name)}
-        , args{std::move(args)}
+        , arguments{std::move(arguments)}
     {
     }
 
     [[nodiscard]]
     auto loc(this Self const &self) -> Location const &
     {
-        return self.location;
+        return self.location_info;
     }
 
     [[nodiscard]]
@@ -378,16 +377,16 @@ class PrototypeAST final
     [[nodiscard]]
     auto get_args(this Self const &self) -> llvm::ArrayRef<ASTPtr<VariableExprAST>>
     {
-        return self.args;
+        return self.arguments;
     }
 
   private:
-    Location location;
+    Location location_info;
     std::string name;
-    Args args;
+    Args arguments;
 };
 
-/// This class represents a function definition itself
+/// Represents a function definition
 class FunctionAST final
 {
     using Self = FunctionAST;
@@ -416,7 +415,7 @@ class FunctionAST final
     ASTPtr<ExprASTList> body;
 };
 
-/// This class represents the list of functions to be processed together
+/// Represents a list of functions in a translation unit
 class ModuleAST final
 {
     using Self = ModuleAST;
@@ -443,6 +442,7 @@ class ModuleAST final
     std::vector<FunctionAST> functions;
 };
 
-auto dump(ModuleAST &) -> void;
+auto dump(ModuleAST const &mod) -> void;
+auto dump(llvm::raw_ostream &stream, ModuleAST const &mod) -> void;
 
-} // namespace toyc
+} // namespace toy

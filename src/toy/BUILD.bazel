@@ -1,0 +1,40 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+
+package(default_visibility = [
+    "//docs:__pkg__",
+    "//src:__subpackages__",
+])
+
+exports_files(["BUILD.bazel"])
+
+cc_library(
+    name = "toy",
+    srcs = ["ast.cpp"],
+    hdrs = ["macros.hpp"],
+    implementation_deps = [
+        "@cpptrace",
+    ],
+    module_interfaces = [
+        "ast.cppm",
+        "lexer.cppm",
+        "mod.cppm",
+        "parser.cppm",
+    ],
+    deps = [
+        "//src/utility",
+        "@llvm-project//llvm:Support",
+        "@magic_enum",
+        "@std_module",
+    ],
+)
+
+cc_binary(
+    name = "toyc",
+    srcs = ["main.cpp"],
+    deps = [
+        ":toy",
+        "//src/utility",
+        "@llvm-project//llvm:Support",
+        "@std_module",
+    ],
+)

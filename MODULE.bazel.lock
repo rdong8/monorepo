@@ -439,7 +439,7 @@
   "moduleExtensions": {
     "//bazel:llvm.bzl%llvm_raw_deps": {
       "general": {
-        "bzlTransitiveDigest": "RFMgR+r2yQKZSrfCqEYFrdy3YpJ/2pTlqBXjIv5CqBM=",
+        "bzlTransitiveDigest": "fZ7zvb6mDpDmyEoyDZujLNJ7E2SfzBwPWLCo3hZkAVc=",
         "usagesDigest": "J+ZRpIBKktpSajRGE4yuSm7Fznr9EDit9Lsb5qVTrFI=",
         "recordedInputs": [
           "REPO_MAPPING:,bazel_tools bazel_tools"
@@ -449,8 +449,8 @@
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
             "attributes": {
               "build_file_content": "# empty",
-              "strip_prefix": "llvm-project-2fbf0823ee4c74a779c9f31bc4d23c99d7444670",
-              "url": "https://github.com/rdong8/llvm-project/archive/2fbf0823ee4c74a779c9f31bc4d23c99d7444670.tar.gz"
+              "strip_prefix": "llvm-project-ad79019bd42b2a0cc6eb91c3165997621ce2feee",
+              "url": "https://github.com/rdong8/llvm-project/archive/ad79019bd42b2a0cc6eb91c3165997621ce2feee.tar.gz"
             }
           }
         }

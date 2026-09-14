@@ -5,10 +5,8 @@
 #include <llvm/Support/raw_ostream.h>
 
 import std;
-
-import toyc.lexer;
-import toyc.parser;
-import toyc.utility;
+import utility;
+import toy;
 
 namespace cl = llvm::cl;
 
@@ -25,29 +23,30 @@ cl::opt<std::string> const input_filename{
     cl::Positional,               //
     cl::desc{"<input toy file>"}, //
     cl::init("-"),                //
-    cl::value_desc{"filename"}    //
+    cl::value_desc{"filename"},   //
 };
 
 cl::opt<Action> const emit_action{
-    "emit",                                                               //
-    cl::desc{"Select the kind of output desired"},                        //
-    cl::values(clEnumValN(Action::DumpAST, "ast", "output the AST dump")) //
+    "emit",                                                                //
+    cl::desc{"Select the kind of output desired"},                         //
+    cl::values(clEnumValN(Action::DumpAST, "ast", "output the AST dump")), //
 };
 
 [[nodiscard]]
-auto parse_input_file(llvm::StringRef filename) -> toyc::ASTPtr<toyc::ModuleAST>
+auto parse_input_file(llvm::StringRef filename) -> toy::ASTPtr<toy::ModuleAST>
 {
-    auto const file_or_error{llvm::MemoryBuffer::getFileOrSTDIN(filename)};
+    auto const file_or_error = llvm::MemoryBuffer::getFileOrSTDIN(filename);
 
-    if (auto const ec{file_or_error.getError()})
+    if (auto const error_code = file_or_error.getError())
     {
-        toyc::eprintln("Could not open input file: {}", ec.message());
+        utility::eprintln("Could not open input file: {}", error_code.message());
         return nullptr;
     }
 
-    auto buffer{file_or_error.get()->getBuffer()};
-    toyc::LexerBuffer lexer{buffer.begin(), buffer.end(), std::string{filename}};
-    toyc::Parser parser{lexer};
+    auto const buffer = file_or_error.get()->getBuffer();
+    toy::LexerBuffer lexer{buffer.begin(), buffer.end(), std::string{filename}};
+    toy::Parser parser{lexer};
+
     return parser.parse_module();
 }
 
@@ -57,7 +56,7 @@ auto main(int argc, char *argv[]) -> int
 {
     cl::ParseCommandLineOptions(argc, argv, "toy compiler\n");
 
-    auto module_ast{parse_input_file(input_filename)};
+    auto const module_ast = parse_input_file(input_filename);
 
     if (!module_ast)
     {
@@ -68,12 +67,12 @@ auto main(int argc, char *argv[]) -> int
     {
         case Action::DumpAST:
         {
-            toyc::dump(*module_ast);
+            toy::dump(*module_ast);
             return 0;
         }
         case Action::None:
         {
-            toyc::eprintln("No action specified (parsing only?), use -emit=<action>");
+            utility::eprintln("No action specified (parsing only?), use -emit=<action>");
             return 1;
         }
     }

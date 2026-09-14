@@ -1,58 +1,64 @@
 module;
 
-#include <boost/core/noncopyable.hpp>
 #include <llvm/ADT/STLExtras.h>
 #include <llvm/ADT/Twine.h>
 #include <llvm/ADT/TypeSwitch.h>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/FormatAdapters.h>
+#include <llvm/Support/FormatVariadic.h>
 #include <llvm/Support/raw_ostream.h>
 #include <magic_enum/magic_enum.hpp>
 
-module toyc.parser.ast;
+module toy:ast.impl;
 
 import std;
+import utility;
+import :ast;
+import :lexer;
 
-import toyc.lexer;
-import toyc.utility;
-
-namespace toyc
+namespace toy
 {
 
 namespace
 {
 
 [[nodiscard]]
-auto loc(auto const *node) -> auto
+auto loc(auto const *node) -> std::string
 {
-    auto const &loc{node->loc()};
-    return llvm::Twine{'@'} + *loc.filename + ":" + llvm::Twine{loc.line} + ":" + llvm::Twine{loc.col};
+    auto const &location = node->loc();
+
+    return llvm::formatv("@{0}:{1}:{2}", *location.filename, location.line, location.column).str();
 }
 
-/// Helper class that implements the AST tree traversal and prints the nodes along the way. The only data member is the
-/// current indentation level.
+/// Helper class that implements the AST tree traversal and prints the nodes along the way.
 class ASTDumper final
 {
     using Self = ASTDumper;
 
   public:
+    explicit ASTDumper(llvm::raw_ostream &output_stream = llvm::errs())
+        : stream{output_stream}
+    {
+    }
+
     /// Print a module, prints the functions in sequence
     auto dump(this Self &self, ModuleAST const *node) -> void
     {
-        auto indent{self.indent()};
+        auto const indent = self.indent();
         self.println("Module:");
 
-        for (auto const &func : *node)
+        for (auto const &function_ast : *node)
         {
-            self.dump(&func);
+            self.dump(&function_ast);
         }
     }
 
   private:
+    llvm::raw_ostream &stream;
     std::uint32_t current_indent{0};
 
     /// RAII helper to manage increasing/decreasing indentation as we traverse the AST
-    class Indent final : private boost::noncopyable
+    class Indent final
     {
         using Self = Indent;
 
@@ -69,23 +75,28 @@ class ASTDumper final
         {
             --this->level;
         }
+
+        Indent(Self const &) = delete;
+        auto operator=(Self const &) -> Self & = delete;
     };
 
     auto print_indent(this Self const &self) -> void
     {
-        eprint("{}", llvm::fmt_repeat(' ', self.current_indent));
+        utility::print(self.stream, "{}", llvm::fmt_repeat(' ', self.current_indent));
     }
 
-    template <typename... Args> auto print(this Self const &self, std::string_view fmt, Args &&...args) -> void
+    template <typename... Args>
+    auto print(this Self const &self, std::string_view format_string, Args &&...arguments) -> void
     {
         self.print_indent();
-        toyc::eprint(fmt, std::forward<Args>(args)...);
+        utility::print(self.stream, format_string, std::forward<Args>(arguments)...);
     }
 
-    template <typename... Args> auto println(this Self const &self, std::string_view fmt, Args &&...args) -> void
+    template <typename... Args>
+    auto println(this Self const &self, std::string_view format_string, Args &&...arguments) -> void
     {
         self.print_indent();
-        toyc::eprintln(fmt, std::forward<Args>(args)...);
+        utility::println(self.stream, format_string, std::forward<Args>(arguments)...);
     }
 
     /// Increases indent in the current scope
@@ -96,14 +107,14 @@ class ASTDumper final
     }
 
     /// Print type: only the shape is printed between the '<' and '>'
-    auto dump(this Self const &, VarType const &type) -> void
+    auto dump(this Self const &self, VarType const &type) -> void
     {
-        toyc::eprint("<");
-        llvm::interleaveComma(type.shape, llvm::errs());
-        toyc::eprint(">");
+        utility::print(self.stream, "<");
+        llvm::interleaveComma(type.shape, self.stream);
+        utility::print(self.stream, ">");
     }
 
-    /// Dispatch to generic expressions to the appropriate subclass using RTTI
+    /// Dispatch generic expressions to the appropriate subclass using RTTI
     auto dump(this Self &self, ExprAST const *expr) -> void
     {
         llvm::TypeSwitch<ExprAST const *>(expr)
@@ -112,7 +123,7 @@ class ASTDumper final
             .Default(
                 [&](ExprAST const *)
                 {
-                    auto indent{self.indent()};
+                    auto const indent = self.indent();
                     self.println("<unknown Expr, kind {}>", magic_enum::enum_name(expr->get_kind()));
                 });
     }
@@ -120,7 +131,7 @@ class ASTDumper final
     /// A "block", or list of expressions
     auto dump(this Self &self, ExprASTList const *expr_list) -> void
     {
-        auto indent{self.indent()};
+        auto const indent = self.indent();
         self.println("Block {{");
 
         for (auto const &expr : *expr_list)
@@ -132,94 +143,88 @@ class ASTDumper final
     }
 
     /// A literal number, just print the value
-    auto dump(this Self &self, NumberExprAST const *num) -> void
+    auto dump(this Self &self, NumberExprAST const *number_node) -> void
     {
-        auto indent{self.indent()};
-        self.println("{} {}", num->get_value(), loc(num));
+        auto const indent = self.indent();
+        self.println("{} {}", number_node->get_value(), loc(number_node));
     }
 
-    /// Helper to recursively print a literal. Handles nested arrays like:
-    ///     [ [ 1, 2 ], [ 3, 4 ] ]
-    /// We print out such array with the dimensions spelled out at every level:
-    ///     <2,2>[<2>[ 1, 2 ], <2>[ 3, 4 ] ]
-    static auto print_literal_helper(ExprAST const *lit_or_num) -> void
+    /// Helper to recursively print a literal.
+    auto print_literal_helper(this Self const &self, ExprAST const *lit_or_num) -> void
     {
-        // Inside a literal expression we can have either a number or another literal
-        if (auto const *num{llvm::dyn_cast<NumberExprAST>(lit_or_num)})
+        if (auto const *const number_node = llvm::dyn_cast<NumberExprAST>(lit_or_num))
         {
-            toyc::eprint("{0:e}", num->get_value());
+            utility::print(self.stream, "{0:e}", number_node->get_value());
             return;
         }
 
-        auto const *literal{llvm::cast<LiteralExprAST>(lit_or_num)};
+        auto const *const literal_node = llvm::cast<LiteralExprAST>(lit_or_num);
 
-        // Print the dimension for this literal first
-        toyc::eprint("<");
-        llvm::interleaveComma(literal->get_dims(), llvm::errs());
-        toyc::eprint(">[ ");
+        utility::print(self.stream, "<");
+        llvm::interleaveComma(literal_node->get_dims(), self.stream);
+        utility::print(self.stream, ">[ ");
 
-        // Print the content, recursing on every element of the list
-        llvm::interleaveComma(literal->get_values(), llvm::errs(),
-                              [&](auto &elem) { print_literal_helper(elem.get()); });
-        toyc::eprint(" ]");
+        llvm::interleaveComma(literal_node->get_values(), self.stream,
+                              [&](auto &element) { self.print_literal_helper(element.get()); });
+        utility::print(self.stream, "]");
     }
 
-    /// Print a literal, see above for implementation
+    /// Print a literal
     auto dump(this Self &self, LiteralExprAST const *node) -> void
     {
-        auto indent{self.indent()};
+        auto const indent = self.indent();
         self.print("Literal: ");
         self.print_literal_helper(node);
-        toyc::eprintln(" {}", loc(node));
+        utility::println(self.stream, " {}", loc(node));
     }
 
-    /// Print a variable reference (just a name)
+    /// Print a variable reference
     auto dump(this Self &self, VariableExprAST const *node) -> void
     {
-        auto indent{self.indent()};
+        auto const indent = self.indent();
         self.println("var: {} {}", node->get_name(), loc(node));
     }
 
-    /// A variable declaration is printing the variable name, type and then recurse on the initializer
+    /// A variable declaration
     auto dump(this Self &self, VarDeclExprAST const *var_decl) -> void
     {
-        auto indent{self.indent()};
+        auto const indent = self.indent();
         self.print("VarDecl {}", var_decl->get_name());
         self.dump(var_decl->get_type());
-        toyc::eprintln(" {}", loc(var_decl));
+        utility::println(self.stream, " {}", loc(var_decl));
         self.dump(var_decl->get_initializer());
     }
 
     /// Print the return and its optional argument
     auto dump(this Self &self, ReturnExprAST const *node) -> void
     {
-        auto indent{self.indent()};
+        auto const indent = self.indent();
         self.println("Return");
 
-        if (auto const *const maybe_expr{node->get_expr()})
+        if (auto const *const maybe_expr = node->get_expr())
         {
             return self.dump(maybe_expr);
         }
 
         {
-            auto indent{self.indent()};
+            auto const inner_indent = self.indent();
             self.println("(void)");
         }
     }
 
-    /// Print a binary operation, first the operator and then recurse into LHS and RHS
+    /// Print a binary operation
     auto dump(this Self &self, BinaryExprAST const *node) -> void
     {
-        auto indent{self.indent()};
+        auto const indent = self.indent();
         self.println("BinOp: {} {}", node->get_op(), loc(node));
         self.dump(node->get_lhs());
         self.dump(node->get_rhs());
     }
 
-    /// Print a call expression, first the callee name and then the list of args
+    /// Print a call expression
     auto dump(this Self &self, CallExprAST const *node) -> void
     {
-        auto indent{self.indent()};
+        auto const indent = self.indent();
         self.println("Call '{}' [ {}", node->get_callee(), loc(node));
 
         for (auto const &arg : node->get_args())
@@ -230,30 +235,30 @@ class ASTDumper final
         self.println("]");
     }
 
-    /// Print a builtin print call, first the builtin name and then the argument
+    /// Print a builtin print call
     auto dump(this Self &self, PrintExprAST const *node) -> void
     {
-        auto indent{self.indent()};
+        auto const indent = self.indent();
         self.println("Print [{}", loc(node));
         self.dump(node->get_arg());
         self.println("]");
     }
 
-    /// Print a function prototype, first the function name, then the list of parameter names
+    /// Print a function prototype
     auto dump(this Self &self, PrototypeAST const *node) -> void
     {
-        auto indent{self.indent()};
+        auto const indent = self.indent();
         self.println("Proto '{}' {}", node->get_name(), loc(node));
         self.print("Params: [");
-        llvm::interleaveComma(node->get_args(), llvm::errs(),
-                              [&](auto const &arg) { toyc::eprint("{}", arg->get_name()); });
-        toyc::eprintln("]");
+        llvm::interleaveComma(node->get_args(), self.stream,
+                              [&](auto const &arg) { utility::print(self.stream, "{}", arg->get_name()); });
+        utility::println(self.stream, "]");
     }
 
-    /// Print a function, first the prototype then the body
+    /// Print a function
     auto dump(this Self &self, FunctionAST const *node) -> void
     {
-        auto indent{self.indent()};
+        auto const indent = self.indent();
         self.println("Function ");
         self.dump(node->get_prototype());
         self.dump(node->get_body());
@@ -262,10 +267,15 @@ class ASTDumper final
 
 } // namespace
 
-auto dump(ModuleAST &mod) -> void
+auto dump(llvm::raw_ostream &stream, ModuleAST const &mod) -> void
 {
-    ASTDumper dumper{};
+    ASTDumper dumper{stream};
     dumper.dump(&mod);
 }
 
-} // namespace toyc
+auto dump(ModuleAST const &mod) -> void
+{
+    dump(llvm::errs(), mod);
+}
+
+} // namespace toy

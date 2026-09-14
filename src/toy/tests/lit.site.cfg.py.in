@@ -1,13 +1,8 @@
 @LIT_SITE_CFG_IN_HEADER@
 
-config.llvm_tools_dir = lit_config.substitute("@LLVM_TOOLS_DIR@")
-config.mlir_obj_dir = "@MLIR_BINARY_DIR@"
-config.enable_bindings_python = @MLIR_ENABLE_BINDINGS_PYTHON@
-config.toy_obj_root = "@TOY_BINARY_DIR@"
-config.llvm_shlib_ext = "@SHLIBEXT@"
+import os
 
-import lit.llvm
-lit.llvm.initialize(lit_config, config)
+config.toy_tools_dir = "@TOY_TOOLS_DIR@"
+config.llvm_tools_dir = "@LLVM_TOOLS_DIR@"
 
-# Let the main config do the real work.
-lit_config.load_config(config, "@TOY_SOURCE_DIR@/test/lit.cfg.py")
+lit_config.load_config(config, os.path.join(os.path.dirname(__file__), "lit.cfg.py"))

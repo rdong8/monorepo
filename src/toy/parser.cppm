@@ -1,5 +1,3 @@
-/// @module toyc.parser
-
 module;
 
 #include <llvm/ADT/STLExtras.h>
@@ -7,21 +5,17 @@ module;
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/raw_ostream.h>
 
-export module toyc.parser;
+export module toy:parser;
 
 import std;
+import utility;
+import :ast;
+import :lexer;
 
-export import toyc.parser.ast;
-
-import toyc.lexer;
-import toyc.utility;
-
-export namespace toyc
+export namespace toy
 {
 
-/// Simple recursive descent parser. Produces a well-formed AST from a stream of `Token`'s supplied by the `Lexer`.
-/// No semantic checks or symbol resolution is performed. For example, variables are referenced by string and the code
-/// could refer to undeclared variables and still have parsing succeed.
+/// Simple recursive descent parser. Produces an AST from a stream of `Token`s supplied by the `Lexer`.
 class Parser final
 {
     using Self = Parser;
@@ -38,12 +32,11 @@ class Parser final
     {
         std::ignore = self.lexer.get_next_token();
 
-        // Parse functions one at a time and accumulate in a vector
         std::vector<FunctionAST> functions{};
 
-        while (auto f{self.parse_definition()})
+        while (auto function_ast = self.parse_definition())
         {
-            functions.push_back(std::move(*f));
+            functions.push_back(std::move(*function_ast));
 
             if (self.lexer.get_current_token() == Token::Eof)
             {
@@ -51,7 +44,6 @@ class Parser final
             }
         }
 
-        // If we didn't reach EOF, there was an error during parsing
         if (self.lexer.get_current_token() != Token::Eof)
         {
             return self.parse_error("nothing", "at end of module");
@@ -64,24 +56,22 @@ class Parser final
     Lexer &lexer;
 
     /// Helper function to signal errors while parsing
-    /// @param[in] expected expected token
-    /// @param[in] context more context
     template <typename T, typename U = std::string_view>
     [[nodiscard]]
     auto parse_error(this Self const &self, T const &expected, U const &context = "") -> std::nullptr_t
     {
-        auto cur_token{self.lexer.get_current_token()};
-        auto const last_loc{self.lexer.get_last_location()};
+        auto const current_token = self.lexer.get_current_token();
+        auto const last_location = self.lexer.get_last_location();
 
-        eprint("Parse error({}, {}): expected '{}' {} but got Token {}", last_loc.line, last_loc.col, expected, context,
-               cur_token);
+        utility::eprint("Parse error({}, {}): expected '{}' {} but got Token {}", last_location.line,
+                        last_location.column, expected, context, current_token);
 
-        if (std::isprint(std::to_underlying(cur_token)))
+        if (std::isprint(std::to_underlying(current_token)))
         {
-            eprintln(" '{}'", static_cast<char>(cur_token));
+            utility::eprintln(" '{}'", static_cast<char>(current_token));
         }
 
-        eprintln("");
+        utility::eprintln("");
 
         return nullptr;
     }
@@ -90,10 +80,9 @@ class Parser final
     [[nodiscard]]
     auto parse_return(this Self &self) -> ASTPtr<ReturnExprAST>
     {
-        auto loc{self.lexer.get_last_location()};
+        auto location = self.lexer.get_last_location();
         self.lexer.consume(Token::Return);
 
-        // Return takes an optional argument
         ASTPtr<ExprAST> expr{};
 
         if (self.lexer.get_current_token() != Token::Semicolon)
@@ -106,16 +95,17 @@ class Parser final
             }
         }
 
-        return std::make_unique<ReturnExprAST>(std::move(loc), std::move(expr));
+        return std::make_unique<ReturnExprAST>(std::move(location), std::move(expr));
     }
 
     /// number_expr ::= number
     [[nodiscard]]
     auto parse_number_expr(this Self &self) -> ASTPtr<ExprAST>
     {
-        auto loc{self.lexer.get_last_location()};
-        auto result{std::make_unique<NumberExprAST>(std::move(loc), self.lexer.get_value())};
+        auto location = self.lexer.get_last_location();
+        auto result = std::make_unique<NumberExprAST>(std::move(location), self.lexer.get_value());
         self.lexer.consume(Token::Number);
+
         return std::move(result);
     }
 
@@ -126,14 +116,12 @@ class Parser final
 
         while (true)
         {
-            // We can have either another nested array or a number literal
             if (self.lexer.get_current_token() == Token::BracketOpen)
             {
                 values.push_back(self.parse_tensor_literal_expr());
 
                 if (!values.back())
                 {
-                    // Parse error in the nested array
                     return std::unexpected(nullptr);
                 }
             }
@@ -147,19 +135,16 @@ class Parser final
                 values.push_back(self.parse_number_expr());
             }
 
-            // End of this list on ']'
             if (self.lexer.get_current_token() == Token::BracketClose)
             {
                 break;
             }
 
-            // Elements are comma separated
             if (self.lexer.get_current_token() != Token{','})
             {
                 return std::unexpected(self.parse_error("] or ,", "in literal expression"));
             }
 
-            // Eat `,`
             std::ignore = self.lexer.get_next_token();
         }
 
@@ -168,7 +153,6 @@ class Parser final
             return std::unexpected(self.parse_error("<something>", "to fill literal expression"));
         }
 
-        // Eat `]`
         std::ignore = self.lexer.get_next_token();
 
         return values;
@@ -179,13 +163,12 @@ class Parser final
     [[nodiscard]]
     auto parse_tensor_literal_expr(this Self &self) -> ASTPtr<ExprAST>
     {
-        auto loc{self.lexer.get_last_location()};
+        auto location = self.lexer.get_last_location();
         self.lexer.consume(Token::BracketOpen);
 
-        // List of values at this nesting level
         LiteralExprAST::Values values{};
 
-        if (auto result{self.parse_tensor_literal_values()}; result.has_value())
+        if (auto result = self.parse_tensor_literal_values(); result.has_value())
         {
             values = std::move(result.value());
         }
@@ -194,30 +177,24 @@ class Parser final
             return result.error();
         }
 
-        // Dimensions for all nesting inside this level
-        Shape dims{};
+        Shape dimensions{};
+        dimensions.push_back(static_cast<Dimension>(values.size()));
 
-        // Next fill in the dimensions. First the current nesting level.
-        dims.push_back(static_cast<Dimension>(values.size()));
-
-        // If there's any nested array, process all of them and ensure dimensions are uniform.
         if (llvm::any_of(values, [](auto const &expr) static { return llvm::isa<LiteralExprAST>(expr.get()); }))
         {
-            auto const *const first_literal{llvm::dyn_cast<LiteralExprAST>(values.front().get())};
+            auto const *const first_literal = llvm::dyn_cast<LiteralExprAST>(values.front().get());
 
             if (first_literal == nullptr)
             {
                 return self.parse_error("uniform well-nested dimensions", "inside literal expression");
             }
 
-            // Append the nested dimensions to the current level
-            auto const first_dims{first_literal->get_dims()};
-            dims.append(first_dims.begin(), first_dims.end());
+            auto const first_dims = first_literal->get_dims();
+            dimensions.append(first_dims.begin(), first_dims.end());
 
-            // Sanity check that shape is uniform across all elements of the list
             for (auto const &expr : values)
             {
-                auto const *const expr_literal{llvm::cast<LiteralExprAST>(expr.get())};
+                auto const *const expr_literal = llvm::cast<LiteralExprAST>(expr.get());
 
                 if (expr_literal == nullptr || expr_literal->get_dims() != first_dims)
                 {
@@ -226,19 +203,18 @@ class Parser final
             }
         }
 
-        return std::make_unique<LiteralExprAST>(std::move(loc), std::move(values), std::move(dims));
+        return std::make_unique<LiteralExprAST>(std::move(location), std::move(values), std::move(dimensions));
     }
 
     /// paren_expr ::= '(' expression ')'
     [[nodiscard]]
     auto parse_paren_expr(this Self &self) -> ASTPtr<ExprAST>
     {
-        // Eat `(`
         std::ignore = self.lexer.get_next_token();
 
-        auto expr{self.parse_expression()};
+        auto expression = self.parse_expression();
 
-        if (!expr)
+        if (!expression)
         {
             return nullptr;
         }
@@ -250,38 +226,34 @@ class Parser final
 
         self.lexer.consume(Token::ParenthesesClose);
 
-        return expr;
+        return expression;
     }
 
     /// identifier_expr
     ///     ::= identifier
-    ///     ::: identifier '(' expression ')'
+    ///     ::= identifier '(' expression ')'
     [[nodiscard]]
     auto parse_identifier_expr(this Self &self) -> ASTPtr<ExprAST>
     {
         std::string name{self.lexer.get_identifier()};
-
-        auto loc{self.lexer.get_last_location()};
-        // Eat identifier
+        auto location = self.lexer.get_last_location();
         std::ignore = self.lexer.get_next_token();
 
-        // Simple variable reference
         if (self.lexer.get_current_token() != Token::ParenthesesOpen)
         {
-            return std::make_unique<VariableExprAST>(std::move(loc), std::move(name));
+            return std::make_unique<VariableExprAST>(std::move(location), std::move(name));
         }
 
-        // This is a function call
         self.lexer.consume(Token::ParenthesesOpen);
-        CallExprAST::Args args{};
+        CallExprAST::Args arguments{};
 
         if (self.lexer.get_current_token() != Token::ParenthesesClose)
         {
             while (true)
             {
-                if (auto arg{self.parse_expression()})
+                if (auto argument = self.parse_expression())
                 {
-                    args.push_back(std::move(arg));
+                    arguments.push_back(std::move(argument));
                 }
                 else
                 {
@@ -304,19 +276,17 @@ class Parser final
 
         self.lexer.consume(Token::ParenthesesClose);
 
-        // Can be a builtin call to `print`
         if (name == "print")
         {
-            if (args.size() != 1)
+            if (arguments.size() != 1)
             {
                 return self.parse_error("<single arg>", "as argument to `print()`");
             }
 
-            return std::make_unique<PrintExprAST>(std::move(loc), std::move(args.front()));
+            return std::make_unique<PrintExprAST>(std::move(location), std::move(arguments.front()));
         }
 
-        // Call to a user-defined function
-        return std::make_unique<CallExprAST>(std::move(loc), std::move(name), std::move(args));
+        return std::make_unique<CallExprAST>(std::move(location), std::move(name), std::move(arguments));
     }
 
     /// primary
@@ -353,22 +323,23 @@ class Parser final
             }
             default:
             {
-                eprintln("Unknown token `{}` when expecting an expression", self.lexer.get_current_token());
+                utility::eprintln("Unknown token `{}` when expecting an expression", self.lexer.get_current_token());
                 return nullptr;
             }
         }
     }
 
-    /// Get the precedence of the pending binary operator token (1 is the lowest precedence)
+    /// Get precedence of pending binary operator token
     [[nodiscard]]
     auto get_token_precedence(this Self const &self) -> int
     {
-        if (::isascii(std::to_underlying(self.lexer.get_current_token())) == 0)
+        auto const token_value = std::to_underlying(self.lexer.get_current_token());
+
+        if (token_value < 0 || token_value > 127)
         {
             return -1;
         }
 
-        // NOLINTBEGIN(*-magic-numbers)
         switch (static_cast<char>(self.lexer.get_current_token()))
         {
             case '-':
@@ -386,44 +357,33 @@ class Parser final
                 return -1;
             }
         }
-        // NOLINTEND(*-magic-numbers)
     }
 
-    /// Recursively parse the RHS of a binary expression
-    /// @param[in] precedence the precedence of the current binary operator
-    ///
-    /// bin_op_rhs ::= ('+' primary)*
+    /// Recursively parse RHS of binary expression
     [[nodiscard]]
     auto parse_bin_op_rhs(this Self &self, int precedence, ASTPtr<ExprAST> lhs) -> ASTPtr<ExprAST>
     {
-        // If this is a binop, find its precednece
         while (true)
         {
-            auto const token_precedence{self.get_token_precedence()};
+            auto const token_precedence = self.get_token_precedence();
 
-            // If this is a binop that binds at least as tightly as the current binop, consume it
-            // Otherwise we're done
             if (token_precedence < precedence)
             {
                 return lhs;
             }
 
-            // Ok, we know this is a binop
-            auto const bin_op{self.lexer.get_current_token()};
+            auto const bin_op = self.lexer.get_current_token();
             self.lexer.consume(bin_op);
-            auto loc{self.lexer.get_last_location()};
+            auto location = self.lexer.get_last_location();
 
-            // Parse the primary expression after the binary operator
-            auto rhs{self.parse_primary()};
+            auto rhs = self.parse_primary();
 
             if (!rhs)
             {
                 return self.parse_error("expression", "to complete binary operator");
             }
 
-            // If the binop binds less tightly with the RHS than the operator after `rhs`, let the pending operator take
-            // `rhs` as its LHS
-            auto const next_precedence{self.get_token_precedence()};
+            auto const next_precedence = self.get_token_precedence();
 
             if (token_precedence < next_precedence)
             {
@@ -435,8 +395,7 @@ class Parser final
                 }
             }
 
-            // Mergs LHS and RHS
-            lhs = std::make_unique<BinaryExprAST>(std::move(loc), static_cast<char>(bin_op), std::move(lhs),
+            lhs = std::make_unique<BinaryExprAST>(std::move(location), static_cast<char>(bin_op), std::move(lhs),
                                                   std::move(rhs));
         }
     }
@@ -445,7 +404,7 @@ class Parser final
     [[nodiscard]]
     auto parse_expression(this Self &self) -> ASTPtr<ExprAST>
     {
-        auto lhs{self.parse_primary()};
+        auto lhs = self.parse_primary();
 
         if (!lhs)
         {
@@ -465,10 +424,9 @@ class Parser final
             return self.parse_error("<", "to begin type");
         }
 
-        // Eat `<`
         std::ignore = self.lexer.get_next_token();
 
-        auto type{std::make_unique<VarType>()};
+        auto type = std::make_unique<VarType>();
 
         while (self.lexer.get_current_token() == Token::Number)
         {
@@ -486,15 +444,11 @@ class Parser final
             return self.parse_error(">", "to end type");
         }
 
-        // Eat `>`
         std::ignore = self.lexer.get_next_token();
 
         return type;
     }
 
-    /// Parse a variable declaration, starting with a `var` keyword followed by an initializer and optional type (shape
-    /// specification) before the initializer
-    ///
     /// decl ::= var identifier [ type ] = expr
     [[nodiscard]]
     auto parse_declaration(this Self &self) -> ASTPtr<VarDeclExprAST>
@@ -504,8 +458,7 @@ class Parser final
             return self.parse_error("var", "to begin declaration");
         }
 
-        auto loc{self.lexer.get_last_location()};
-        // Eat `var`
+        auto location = self.lexer.get_last_location();
         std::ignore = self.lexer.get_next_token();
 
         if (self.lexer.get_current_token() != Token::Identifier)
@@ -514,10 +467,8 @@ class Parser final
         }
 
         std::string identifier{self.lexer.get_identifier()};
-        // Eat identifier
         std::ignore = self.lexer.get_next_token();
 
-        // Type is optioanl, it can be inferred
         ASTPtr<VarType> type{};
 
         if (self.lexer.get_current_token() == Token{'<'})
@@ -536,25 +487,23 @@ class Parser final
 
         self.lexer.consume(Token{'='});
 
-        auto expr{self.parse_expression()};
+        auto expression = self.parse_expression();
 
-        if (!expr)
+        if (!expression)
         {
             return nullptr;
         }
 
         return std::make_unique<VarDeclExprAST>( //
-            std::move(loc),                      //
+            std::move(location),                 //
             std::move(identifier),               //
             std::move(*type),                    //
-            std::move(expr)                      //
+            std::move(expression)                //
         );
     }
 
-    /// Parse a block: a list of expressions separated by semicolons and wrapped in curly braces
-    ///
     /// block ::= { expression_list }
-    /// expression_list ::= blocK_expr ; expression_list
+    /// expression_list ::= block_expr ; expression_list
     /// block_expr ::= decl | "return" | expr
     [[nodiscard]]
     auto parse_block(this Self &self) -> ASTPtr<ExprASTList>
@@ -566,9 +515,8 @@ class Parser final
 
         self.lexer.consume(Token::BraceOpen);
 
-        auto expr_list{std::make_unique<ExprASTList>()};
+        auto expr_list = std::make_unique<ExprASTList>();
 
-        // Ignore empty expressions: swallow sequences of semicolons
         while (self.lexer.get_current_token() == Token::Semicolon)
         {
             self.lexer.consume(Token::Semicolon);
@@ -576,24 +524,20 @@ class Parser final
 
         while (self.lexer.get_current_token() != Token::BraceClose && self.lexer.get_current_token() != Token::Eof)
         {
-
             switch (self.lexer.get_current_token())
             {
                 case Token::Var:
                 {
-                    // Variable declaration
                     expr_list->push_back(self.parse_declaration());
                     break;
                 }
                 case Token::Return:
                 {
-                    // Return statement
                     expr_list->push_back(self.parse_return());
                     break;
                 }
                 default:
                 {
-                    // General expression
                     expr_list->push_back(self.parse_expression());
                 }
             }
@@ -603,13 +547,11 @@ class Parser final
                 return nullptr;
             }
 
-            // Ensure that elements are separated by a semicolon
             if (self.lexer.get_current_token() != Token::Semicolon)
             {
                 return self.parse_error(";", "after expression");
             }
 
-            // Ignore empty expressions: swallow sequences of semicolons
             while (self.lexer.get_current_token() == Token::Semicolon)
             {
                 self.lexer.consume(Token::Semicolon);
@@ -631,7 +573,7 @@ class Parser final
     [[nodiscard]]
     auto parse_prototype(this Self &self) -> ASTPtr<PrototypeAST>
     {
-        auto loc{self.lexer.get_last_location()};
+        auto location = self.lexer.get_last_location();
 
         if (self.lexer.get_current_token() != Token::Def)
         {
@@ -655,16 +597,17 @@ class Parser final
 
         self.lexer.consume(Token::ParenthesesOpen);
 
-        PrototypeAST::Args args{};
+        PrototypeAST::Args arguments{};
 
         if (self.lexer.get_current_token() != Token::ParenthesesClose)
         {
             while (true)
             {
-                std::string name{self.lexer.get_identifier()};
-                auto loc{self.lexer.get_last_location()};
+                std::string parameter_name{self.lexer.get_identifier()};
+                auto parameter_location = self.lexer.get_last_location();
                 self.lexer.consume(Token::Identifier);
-                args.push_back(std::make_unique<VariableExprAST>(std::move(loc), std::move(name)));
+                arguments.push_back(
+                    std::make_unique<VariableExprAST>(std::move(parameter_location), std::move(parameter_name)));
 
                 if (self.lexer.get_current_token() != Token{','})
                 {
@@ -685,27 +628,23 @@ class Parser final
             return self.parse_error(")", "to end function prototype");
         }
 
-        // Success
         self.lexer.consume(Token::ParenthesesClose);
 
-        return std::make_unique<PrototypeAST>(std::move(loc), std::move(function_name), std::move(args));
+        return std::make_unique<PrototypeAST>(std::move(location), std::move(function_name), std::move(arguments));
     }
 
-    /// Parse a function definition, we expect a prototype initiated with the `def` keyword, followed by a block
-    /// containing a list of expressions
-    ///
     /// definition ::= prototype block
     [[nodiscard]]
     auto parse_definition(this Self &self) -> ASTPtr<FunctionAST>
     {
-        auto prototype{self.parse_prototype()};
+        auto prototype = self.parse_prototype();
 
         if (!prototype)
         {
             return nullptr;
         }
 
-        if (auto block{self.parse_block()})
+        if (auto block = self.parse_block())
         {
             return std::make_unique<FunctionAST>(std::move(prototype), std::move(block));
         }
@@ -714,4 +653,4 @@ class Parser final
     }
 };
 
-} // namespace toyc
+} // namespace toy

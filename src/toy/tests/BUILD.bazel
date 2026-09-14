@@ -1,0 +1,29 @@
+load("@llvm-project//llvm:lit_test.bzl", "lit_expand_template", "lit_test")
+
+lit_expand_template(
+    name = "lit_site_cfg_py",
+    testonly = True,
+    out = "lit.site.cfg.py",
+    dirname_substitutions = {
+        "@LLVM_TOOLS_DIR@": "@llvm-project//llvm:BUILD.bazel",
+        "@TOY_TOOLS_DIR@": "//src/toy:BUILD.bazel",
+    },
+    template = "lit.site.cfg.py.in",
+)
+
+[
+    lit_test(
+        name = "{}.test".format(src),
+        size = "small",
+        srcs = [src],
+        data = [
+            "lit.cfg.py",
+            "lit.site.cfg.py",
+            "//src/toy:toyc",
+            "@llvm-project//llvm:FileCheck",
+            "@llvm-project//llvm:count",
+            "@llvm-project//llvm:not",
+        ],
+    )
+    for src in glob(["*.toy"])
+]
