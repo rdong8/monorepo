@@ -44,7 +44,7 @@ bazel_dep(name = "zstd", version = "1.5.7.bcr.1", repo_name = "llvm_zstd")  # Se
 # cpptrace
 git_override(
     module_name = "cpptrace",
-    commit = "d3e68b20dced098569b2826ad17ff7687563dfdb",
+    commit = "91b6b78e408a8b1c0b7146c9034a03156c082da2",
     remote = "https://github.com/rdong8/cpptrace",
 )
 
