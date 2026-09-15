@@ -56,6 +56,7 @@ RUN cat <<EOF >${BREWFILE}
   brew "fd"
   brew "fzf"
   brew "gawk"
+  brew "gh"
   brew "git-delta"
   brew "helix"
   brew "jq"
