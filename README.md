@@ -23,7 +23,9 @@ Then run `id` on the host to determine your user's UID and GID. Use that to fill
 
 Then set the `dotfiles.repository` setting in VS Code to your dotfiles repository. Note that your install script MUST add Linuxbrew to the fish `PATH`.
 
-Then build the devcontainer. All commands after this point are to be run *in the devcontainer*, not on the host.
+Then build the devcontainer. Once the post-start script completes, it's a good practice to reload your window.
+
+All commands after this point are to be run *in the devcontainer*, not on the host.
 
 ## Development Workflow
 

@@ -41,7 +41,7 @@ ARG FISH_CONFIG=/home/${REMOTE_USER}/.config/fish
 ##// Get homebrew binary
 ARG HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
 COPY \
-  --from=docker.io/homebrew/brew:latest \
+  --from=ghcr.io/homebrew/brew:latest \
   --chown=${REMOTE_USER} \
   ${HOMEBREW_PREFIX} \
   ${HOMEBREW_PREFIX}
