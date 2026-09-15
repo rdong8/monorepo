@@ -95,9 +95,8 @@ auto differentiation_demo(quill::Logger *logger) -> void
 
 } // namespace
 
-auto co_main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) -> boost::cobalt::main
+auto co_main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) -> boost::cobalt::main
 {
-    // By default spdlog will log to stdout
     auto *logger = configure_logger();
 
     co_await cobalt_demo(logger);
