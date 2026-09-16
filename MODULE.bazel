@@ -80,7 +80,7 @@ llvm.toolchain(
     cxx_standard = {"": "c++2d"},
     # TODO: make linker hermetic
     link_flags = {"": ["--ld-path=/home/linuxbrew/.linuxbrew/bin/wild"]},
-    llvm_version = "23.1.0",
+    llvm_version = "23.1.1",
 )
 use_repo(llvm, "llvm_toolchain", "llvm_toolchain_llvm")
 
@@ -95,8 +95,8 @@ bazel_dep(name = "rules_doxygen", version = "2.6.4", dev_dependency = True)
 ## TODO: use https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2977r1.html
 git_override(
     module_name = "hedron_compile_commands",
-    commit = "a3ea4aa87b4539b3d6e356f49b3eb81f593e5656",
-    remote = "https://github.com/rdong8/bazel-compile-commands-extractor",
+    commit = "078ba7675c05bea2666c92d9a8abe200d8547655",
+    remote = "https://github.com/helly25/bazel-compile-commands-extractor",
 )
 
 ## rules_doxygen
