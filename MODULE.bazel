@@ -51,7 +51,7 @@ git_override(
 ## rules_cc
 git_override(
     module_name = "rules_cc",
-    commit = "31c814e8ba842e54a2e4f967699d25374f22fb75",
+    commit = "77b47b724ab05a076039f011a7295a4edce04d33",
     remote = "https://github.com/rdong8/rules_cc",
 )
 
