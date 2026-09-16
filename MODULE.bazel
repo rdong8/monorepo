@@ -30,7 +30,7 @@ bazel_dep(name = "boost.unordered", version = "1.90.0.bcr.1")
 bazel_dep(name = "cpptrace", version = "1.0.4.bcr.1")
 bazel_dep(name = "google_benchmark", version = "1.9.5")
 bazel_dep(name = "googletest", version = "1.18.0.bcr.1")
-bazel_dep(name = "llvm", version = "0.8.20")  # See llvm-project/utils/bazel/MODULE.bazel
+bazel_dep(name = "llvm", version = "0.8.21")  # See llvm-project/utils/bazel/MODULE.bazel
 bazel_dep(name = "magic_enum", version = "0.9.8")
 bazel_dep(name = "platforms", version = "1.1.0")
 bazel_dep(name = "quill", version = "13.1.0")
