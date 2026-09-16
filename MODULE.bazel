@@ -39,7 +39,7 @@ bazel_dep(name = "rules_python", version = "2.3.3")
 bazel_dep(name = "rules_shell", version = "0.8.0")
 bazel_dep(name = "toolchains_llvm", version = "1.9.0")
 bazel_dep(name = "zlib-ng", version = "2.3.3.bcr.2", repo_name = "llvm_zlib")  # See llvm-project/utils/bazel/MODULE.bazel
-bazel_dep(name = "zstd", version = "1.5.7.bcr.1", repo_name = "llvm_zstd")  # See llvm-project/utils/bazel/MODULE.bazel
+bazel_dep(name = "zstd", version = "1.5.7.bcr.2", repo_name = "llvm_zstd")  # See llvm-project/utils/bazel/MODULE.bazel
 
 # cpptrace
 git_override(
