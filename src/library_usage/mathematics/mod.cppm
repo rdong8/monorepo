@@ -10,10 +10,10 @@ import std;
 
 import quill;
 
-export namespace math
+namespace math
 {
 /// An n-dimensional mathematical vector
-template <std::size_t N, std::floating_point Float = double> struct Vec
+export template <std::size_t N, std::floating_point Float = double> struct Vec
 {
     using Self = Vec<N, Float>;        ///< Alias for the type of this vector (postfix doc comment)
     using Data = std::array<Float, N>; ///< Alias for the underlying data type
@@ -101,7 +101,7 @@ auto constexpr DEFAULT_DX = 0.0001;
 /// auto constexpr F{[] static (double x) { return x * x; }};
 /// std::println("{}", d_dx<F>(3.0)); // Prints 6
 /// @endcode
-template <auto F, std::floating_point Float = double, Float DX = DEFAULT_DX>
+export template <auto F, std::floating_point Float = double, Float DX = DEFAULT_DX>
     requires requires(Float x) {
         { F(x) } -> std::same_as<Float>;
     }
