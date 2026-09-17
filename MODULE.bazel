@@ -66,7 +66,7 @@ git_override(
 
 git_override(
     module_name = "toolchains_llvm",
-    commit = "5f348a5d01afa44bae4a7b32d2823edea407a29e",
+    commit = "11829e56891095b1f7549ccff02748f9d05a9d23",
     remote = "https://github.com/bazel-contrib/toolchains_llvm",
 )
 
