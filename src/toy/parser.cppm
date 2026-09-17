@@ -12,6 +12,7 @@ import std;
 import :ast;
 import :lexer;
 import utility;
+import :utility;
 
 export namespace toy
 {
@@ -64,15 +65,15 @@ class Parser final
         auto const current_token = self.lexer.get_current_token();
         auto const last_location = self.lexer.get_last_location();
 
-        utility::eprint("Parse error({}, {}): expected '{}' {} but got Token {}", last_location.line,
-                        last_location.column, expected, context, current_token);
+        eprint("Parse error({}, {}): expected '{}' {} but got Token {}", last_location.line, last_location.column,
+               expected, context, current_token);
 
         if (std::isprint(std::to_underlying(current_token)))
         {
-            utility::eprintln(" '{}'", static_cast<char>(current_token));
+            eprintln(" '{}'", static_cast<char>(current_token));
         }
 
-        utility::eprintln("");
+        eprintln("");
 
         return nullptr;
     }
@@ -324,7 +325,7 @@ class Parser final
             }
             default:
             {
-                utility::eprintln("Unknown token `{}` when expecting an expression", self.lexer.get_current_token());
+                eprintln("Unknown token `{}` when expecting an expression", self.lexer.get_current_token());
                 return nullptr;
             }
         }

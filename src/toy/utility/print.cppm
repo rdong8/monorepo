@@ -3,11 +3,11 @@ module;
 #include <llvm/Support/FormatVariadic.h>
 #include <llvm/Support/raw_ostream.h>
 
-export module utility:print;
+export module toy:utility.print;
 
 import std;
 
-export namespace utility
+export namespace toy
 {
 
 template <typename... Args>
@@ -43,4 +43,4 @@ template <typename... Args> auto eprintln(std::string_view format_string, Args &
     println(llvm::errs(), format_string, std::forward<Args>(arguments)...);
 }
 
-} // namespace utility
+} // namespace toy

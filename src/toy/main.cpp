@@ -7,7 +7,6 @@
 import std;
 
 import toy;
-import utility;
 
 namespace cl = llvm::cl;
 
@@ -40,7 +39,7 @@ auto parse_input_file(llvm::StringRef filename) -> toy::ASTPtr<toy::ModuleAST>
 
     if (auto const error_code = file_or_error.getError())
     {
-        utility::eprintln("Could not open input file: {}", error_code.message());
+        toy::eprintln("Could not open input file: {}", error_code.message());
         return nullptr;
     }
 
@@ -73,7 +72,7 @@ auto main(int argc, char *argv[]) -> int
         }
         case Action::None:
         {
-            utility::eprintln("No action specified (parsing only?), use -emit=<action>");
+            toy::eprintln("No action specified (parsing only?), use -emit=<action>");
             return 1;
         }
     }

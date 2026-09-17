@@ -13,7 +13,6 @@ cc_test(
         "@cpptrace",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
-        "@llvm-project//llvm:Support",
         "@std_module",
     ],
 )

@@ -1,4 +1,19 @@
 load("@llvm-project//llvm:lit_test.bzl", "lit_expand_template", "lit_test")
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
+cc_test(
+    name = "utility",
+    size = "small",
+    srcs = ["utility.cpp"],
+    linkstatic = True,
+    deps = [
+        "//src/toy",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+        "@llvm-project//llvm:Support",
+        "@std_module",
+    ],
+)
 
 lit_expand_template(
     name = "lit_site_cfg_py",

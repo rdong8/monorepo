@@ -9,12 +9,10 @@ cc_library(
     name = "utility",
     implementation_deps = [
         "@cpptrace",
-        "@llvm-project//llvm:Support",
         "@std_module",
     ],
     module_interfaces = [
         "mod.cppm",
-        "print.cppm",
         "stacktrace.cppm",
     ],
 )

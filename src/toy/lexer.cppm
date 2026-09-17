@@ -13,6 +13,7 @@ export module toy:lexer;
 import std;
 
 import utility;
+import :utility;
 
 export namespace toy
 {

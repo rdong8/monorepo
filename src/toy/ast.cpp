@@ -15,7 +15,7 @@ import std;
 
 import :ast;
 import :lexer;
-import utility;
+import :utility;
 
 namespace toy
 {
@@ -83,21 +83,21 @@ class ASTDumper final
 
     auto print_indent(this Self const &self) -> void
     {
-        utility::print(self.stream, "{}", llvm::fmt_repeat(' ', self.current_indent));
+        toy::print(self.stream, "{}", llvm::fmt_repeat(' ', self.current_indent));
     }
 
     template <typename... Args>
     auto print(this Self const &self, std::string_view format_string, Args &&...arguments) -> void
     {
         self.print_indent();
-        utility::print(self.stream, format_string, std::forward<Args>(arguments)...);
+        toy::print(self.stream, format_string, std::forward<Args>(arguments)...);
     }
 
     template <typename... Args>
     auto println(this Self const &self, std::string_view format_string, Args &&...arguments) -> void
     {
         self.print_indent();
-        utility::println(self.stream, format_string, std::forward<Args>(arguments)...);
+        toy::println(self.stream, format_string, std::forward<Args>(arguments)...);
     }
 
     /// Increases indent in the current scope
@@ -110,9 +110,9 @@ class ASTDumper final
     /// Print type: only the shape is printed between the '<' and '>'
     auto dump(this Self const &self, VarType const &type) -> void
     {
-        utility::print(self.stream, "<");
+        toy::print(self.stream, "<");
         llvm::interleaveComma(type.shape, self.stream);
-        utility::print(self.stream, ">");
+        toy::print(self.stream, ">");
     }
 
     /// Dispatch generic expressions to the appropriate subclass using RTTI
@@ -155,19 +155,19 @@ class ASTDumper final
     {
         if (auto const *const number_node = llvm::dyn_cast<NumberExprAST>(lit_or_num))
         {
-            utility::print(self.stream, "{0:e}", number_node->get_value());
+            toy::print(self.stream, "{0:e}", number_node->get_value());
             return;
         }
 
         auto const *const literal_node = llvm::cast<LiteralExprAST>(lit_or_num);
 
-        utility::print(self.stream, "<");
+        toy::print(self.stream, "<");
         llvm::interleaveComma(literal_node->get_dims(), self.stream);
-        utility::print(self.stream, ">[ ");
+        toy::print(self.stream, ">[ ");
 
         llvm::interleaveComma(literal_node->get_values(), self.stream,
                               [&](auto &element) { self.print_literal_helper(element.get()); });
-        utility::print(self.stream, "]");
+        toy::print(self.stream, "]");
     }
 
     /// Print a literal
@@ -176,7 +176,7 @@ class ASTDumper final
         auto const indent = self.indent();
         self.print("Literal: ");
         self.print_literal_helper(node);
-        utility::println(self.stream, " {}", loc(node));
+        toy::println(self.stream, " {}", loc(node));
     }
 
     /// Print a variable reference
@@ -192,7 +192,7 @@ class ASTDumper final
         auto const indent = self.indent();
         self.print("VarDecl {}", var_decl->get_name());
         self.dump(var_decl->get_type());
-        utility::println(self.stream, " {}", loc(var_decl));
+        toy::println(self.stream, " {}", loc(var_decl));
         self.dump(var_decl->get_initializer());
     }
 
@@ -252,8 +252,8 @@ class ASTDumper final
         self.println("Proto '{}' {}", node->get_name(), loc(node));
         self.print("Params: [");
         llvm::interleaveComma(node->get_args(), self.stream,
-                              [&](auto const &arg) { utility::print(self.stream, "{}", arg->get_name()); });
-        utility::println(self.stream, "]");
+                              [&](auto const &arg) { toy::print(self.stream, "{}", arg->get_name()); });
+        toy::println(self.stream, "]");
     }
 
     /// Print a function

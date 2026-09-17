@@ -9,17 +9,24 @@ exports_files(["BUILD.bazel"])
 
 cc_library(
     name = "toy",
-    srcs = ["ast.cpp"],
-    hdrs = ["macros.hpp"],
+    srcs = glob(
+        include = ["**/*.cpp"],
+        exclude = [
+            "tests/",
+            "main.cpp",
+        ],
+    ),
+    hdrs = glob(
+        include = ["**/*.hpp"],
+        exclude = ["tests/"],
+    ),
     implementation_deps = [
         "@cpptrace",
     ],
-    module_interfaces = [
-        "ast.cppm",
-        "lexer.cppm",
-        "mod.cppm",
-        "parser.cppm",
-    ],
+    module_interfaces = glob(
+        include = ["**/*.cppm"],
+        exclude = ["tests/"],
+    ),
     deps = [
         "//src/utility",
         "@llvm-project//llvm:Support",
@@ -33,7 +40,6 @@ cc_binary(
     srcs = ["main.cpp"],
     deps = [
         ":toy",
-        "//src/utility",
         "@llvm-project//llvm:Support",
         "@std_module",
     ],

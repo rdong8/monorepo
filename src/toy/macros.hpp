@@ -11,8 +11,8 @@
     {                                                                                                                  \
         if (!(expr)) [[unlikely]]                                                                                      \
         {                                                                                                              \
-            utility::eprintln(fmt __VA_OPT__(, ) __VA_ARGS__);                                                         \
-            utility::eprintln("{}", utility::trace_formatter.format(cpptrace::generate_trace()));                      \
+            ::toy::eprintln(fmt __VA_OPT__(, ) __VA_ARGS__);                                                           \
+            ::toy::eprintln("{}", ::utility::trace_formatter.format(cpptrace::generate_trace()));                      \
             std::terminate();                                                                                          \
         }                                                                                                              \
     }()
