@@ -8,7 +8,7 @@ def _std_module_repo_impl(repo_context):
     libcxx_dir = llvm_build_file.dirname.get_child("share").get_child("libc++").get_child("v1")
 
     if not libcxx_dir.exists:
-        fail("libc++ module directory not found at: %s" % libcxx_dir)
+        fail("libc++ module directory not found at: " + libcxx_dir)
 
     repo_context.symlink(libcxx_dir.get_child("std.cppm"), "std.cppm")
     repo_context.symlink(libcxx_dir.get_child("std"), "std")
