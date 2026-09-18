@@ -37,11 +37,6 @@
       "target": "/home/dev/.cache/Homebrew",
       "type": "volume"
     }
-    // {
-    //   "source": "conan",
-    //   "target": "/home/dev/.conan2",
-    //   "type": "volume"
-    // },
     // WARNING: it is not safe to use multiple concurrent sccache instances (ie. dev containers)
     // https://github.com/mozilla/sccache/blob/main/docs/Local.md#local
     // {
