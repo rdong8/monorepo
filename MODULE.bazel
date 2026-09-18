@@ -3,22 +3,6 @@ module(
     version = "latest",
 )
 
-# C++ std module
-std_module = use_extension("//bazel:std_module.bzl", "std_module")
-use_repo(std_module, "std_module")
-
-# LLVM raw
-
-llvm_raw_deps = use_extension("//bazel:llvm.bzl", "llvm_raw_deps")
-use_repo(llvm_raw_deps, "llvm-raw")
-
-llvm_configure = use_repo_rule("@llvm-raw//utils/bazel:configure.bzl", "llvm_configure")
-
-llvm_configure(
-    name = "llvm-project",
-    targets = ["X86"],
-)
-
 # Dependencies
 
 bazel_dep(name = "abseil-cpp", version = "20260817.0")
@@ -41,7 +25,7 @@ bazel_dep(name = "toolchains_llvm", version = "1.9.1")
 bazel_dep(name = "zlib-ng", version = "2.3.3.bcr.2", repo_name = "llvm_zlib")  # See llvm-project/utils/bazel/MODULE.bazel
 bazel_dep(name = "zstd", version = "1.5.7.bcr.2", repo_name = "llvm_zstd")  # See llvm-project/utils/bazel/MODULE.bazel
 
-# cpptrace
+## cpptrace
 git_override(
     module_name = "cpptrace",
     commit = "9edc08b0ffafc6231e5f7b1f4e81ac0c0ccf75f0",
@@ -104,20 +88,22 @@ git_override(
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 use_repo(doxygen_extension, "doxygen")
 
-http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+doxygen_awesome = use_extension("//bazel:doxygen_awesome.bzl", "doxygen_awesome")
+use_repo(doxygen_awesome, "doxygen_awesome")
 
-http_archive(
-    name = "doxygen_awesome_css",
-    build_file_content = """
-exports_files(["doxygen-awesome.css"])
+# C++ std module
 
-filegroup(
-    name = "css",
-    srcs = ["doxygen-awesome.css"],
-    visibility = ["//visibility:public"],
-)
-""",
-    sha256 = "6f527e5733723bfd7243c28f24588dca4714cf977fea6147fdb4ae2050244409",
-    strip_prefix = "doxygen-awesome-css-2.4.2",
-    urls = ["https://github.com/jothepro/doxygen-awesome-css/archive/refs/tags/v2.4.2.tar.gz"],
+std_module = use_extension("//bazel:std_module.bzl", "std_module")
+use_repo(std_module, "std_module")
+
+# LLVM raw
+
+llvm_raw = use_extension("//bazel:llvm.bzl", "llvm_raw")
+use_repo(llvm_raw, "llvm-raw")
+
+llvm_configure = use_repo_rule("@llvm-raw//utils/bazel:configure.bzl", "llvm_configure")
+
+llvm_configure(
+    name = "llvm-project",
+    targets = ["X86"],
 )

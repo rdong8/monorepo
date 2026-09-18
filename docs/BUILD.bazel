@@ -1,21 +1,24 @@
 # TODO(docs): https://registry.bazel.build/modules/doxygen?
 
-load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 load("@doxygen//:doxygen.bzl", "doxygen")
+load("@doxygen_awesome//bazel:defs.bzl", "CSS_FILES", "JS_FILES")
 load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+load("//bazel:copy_files.bzl", "copy_files")
 
 # External repo layout in Bazel's sandbox can vary across configs
-# Stage the file into $(OUTDIR) instead
-copy_file(
-    name = "copy_doxygen_awesome_css",
-    src = "@doxygen_awesome_css//:doxygen-awesome.css",
-    out = "doxygen-awesome.css",
+# Stage the files into $(OUTDIR) instead
+copy_files(
+    name = "copy_doxygen_awesome",
+    srcs = [
+        "@doxygen_awesome//:css",
+        "@doxygen_awesome//:js",
+    ],
 )
 
 doxygen(
     name = "docs",
     srcs = [
-        ":copy_doxygen_awesome_css",
+        ":copy_doxygen_awesome",
         "//:README.md",
     ] + glob(
         [
@@ -33,6 +36,7 @@ doxygen(
     dot_image_format = "svg",
     exclude_patterns = ["*/external/*"],
     extension_mapping = ["cppm=C++"],
+    external_search = True,
     extract_all = True,
     file_patterns = [
         "*.cpp",
@@ -44,16 +48,24 @@ doxygen(
     generate_html = True,
     generate_latex = False,
     generate_treeview = True,
+    have_dot = True,
     hide_friend_compounds = True,
     hide_in_body_docs = True,
-    html_extra_stylesheet = "$(OUTDIR)/doxygen-awesome.css",
+    # https://github.com/jothepro/doxygen-awesome-css#choosing-a-layout
+    html_colorstyle = "LIGHT",
+    # https://jothepro.github.io/doxygen-awesome-css/md_docs_2extensions.html#extension-copy-button
+    html_copy_clipboard = False,
+    html_extra_files = ["$(OUTDIR)/" + file for file in JS_FILES],
+    html_extra_stylesheet = ["$(OUTDIR)/" + file for file in CSS_FILES],
     javadoc_autobrief = True,
-    # macro_expansion = True,
+    # https://jothepro.github.io/doxygen-awesome-css/md_docs_2extensions.html#extension-toc
+    page_outline_panel = False,
     project_brief = "Personal project/experiment monorepo",
     project_name = "monorepo",
-    # qt_autobrief = True,
     quiet = True,
     recursive = True,
+    searchengine = True,
+    server_based_search = True,
     show_include_files = False,
     sort_by_scope_name = True,
     sort_member_docs = False,

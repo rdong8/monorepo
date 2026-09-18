@@ -443,10 +443,25 @@
   },
   "selectedYankedVersions": {},
   "moduleExtensions": {
-    "//bazel:llvm.bzl%llvm_raw_deps": {
+    "//bazel:doxygen_awesome.bzl%doxygen_awesome": {
       "general": {
-        "bzlTransitiveDigest": "fZ7zvb6mDpDmyEoyDZujLNJ7E2SfzBwPWLCo3hZkAVc=",
-        "usagesDigest": "J+ZRpIBKktpSajRGE4yuSm7Fznr9EDit9Lsb5qVTrFI=",
+        "bzlTransitiveDigest": "VcowVh+ldMvTy2epn6FJUY+yp9oM04Or8UtTKS/wjZM=",
+        "usagesDigest": "fUqqQJVwNLv43yw+vE/KtVG0FfXJc+WXJpGXivP+BJM=",
+        "recordedInputs": [],
+        "generatedRepoSpecs": {
+          "doxygen_awesome": {
+            "repoRuleId": "@@//bazel:doxygen_awesome.bzl%doxygen_awesome_repo",
+            "attributes": {
+              "version": "2.5.0"
+            }
+          }
+        }
+      }
+    },
+    "//bazel:llvm.bzl%llvm_raw": {
+      "general": {
+        "bzlTransitiveDigest": "gowBDnx/JQ6rgm6VZj1bfyzGaSxYY1HAGp9VgB3fMIs=",
+        "usagesDigest": "xiaTXm7HGlfDwyDj34sRzaUbfO3pUh0wYcHa8cJCID0=",
         "recordedInputs": [
           "REPO_MAPPING:,bazel_tools bazel_tools"
         ],

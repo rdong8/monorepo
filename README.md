@@ -2,7 +2,7 @@
 
 Monorepo for my personal projects. Also serves as a demo for doing things the "right way". This always means using the most correct, most modern, most powerful tool for the job. There is no such thing as overkill.
 
-Note: 5f3f3cf5b75c616d135399a14289dbb2a69f1db9 was the last commit with CMake/Conan.
+Note: [5f3f3cf](https://github.com/rdong8/monorepo/commit/5f3f3cf5b75c616d135399a14289dbb2a69f1db9) was the last commit with CMake/Conan.
 
 ## Initialize
 
