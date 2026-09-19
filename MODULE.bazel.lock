@@ -232,6 +232,8 @@
     "https://bcr.bazel.build/modules/googletest/1.18.0.bcr.1/MODULE.bazel": "b489ffe6790bb6a3544b64c7604cbbea8a5529574cd4697dac227472656cea2b",
     "https://bcr.bazel.build/modules/googletest/1.18.0.bcr.1/source.json": "963014628876b76748ab3babb368f53ff4afe6ee327bf9fc1e893e62757b6ac4",
     "https://bcr.bazel.build/modules/googletest/1.18.0/MODULE.bazel": "00f855225d5746ca0d59965b09762e278b7259a6dfb7840d1b034ab60e72921e",
+    "https://bcr.bazel.build/modules/graphviz/14.0.0.bcr.3/MODULE.bazel": "044c9be2f5496562ad042397ce90686f5930d8e923683dad9864c199697c1acc",
+    "https://bcr.bazel.build/modules/graphviz/14.0.0.bcr.3/source.json": "c86ebc0497acd45bdbcc52a84468927b8b80990130648f319f63bc7d987eb714",
     "https://bcr.bazel.build/modules/jq.bzl/0.1.0/MODULE.bazel": "2ce69b1af49952cd4121a9c3055faa679e748ce774c7f1fda9657f936cae902f",
     "https://bcr.bazel.build/modules/jq.bzl/0.1.0/source.json": "746bf13cac0860f091df5e4911d0c593971cd8796b5ad4e809b2f8e133eee3d5",
     "https://bcr.bazel.build/modules/jsoncpp/1.9.5/MODULE.bazel": "31271aedc59e815656f5736f282bb7509a97c7ecb43e927ac1a37966e0578075",
@@ -445,7 +447,7 @@
   "moduleExtensions": {
     "//bazel:doxygen_awesome.bzl%doxygen_awesome": {
       "general": {
-        "bzlTransitiveDigest": "VcowVh+ldMvTy2epn6FJUY+yp9oM04Or8UtTKS/wjZM=",
+        "bzlTransitiveDigest": "0vo6IzEjf0+io3XBZuW2X/V9bKgCJyChrArns5QYpzs=",
         "usagesDigest": "fUqqQJVwNLv43yw+vE/KtVG0FfXJc+WXJpGXivP+BJM=",
         "recordedInputs": [],
         "generatedRepoSpecs": {

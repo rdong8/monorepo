@@ -52,8 +52,14 @@ llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
 llvm.toolchain(
     # TODO: https://github.com/bazelbuild/bazel-central-registry/pull/10539
     conly_flags = {
-        "": ["-DZ_HAVE_UNISTD_H"],
-        "linux-x86_64": ["-DZ_HAVE_UNISTD_H"],
+        "": [
+            "-DZ_HAVE_UNISTD_H",
+            "-D_DEFAULT_SOURCE",
+        ],
+        "linux-x86_64": [
+            "-DZ_HAVE_UNISTD_H",
+            "-D_DEFAULT_SOURCE",
+        ],
     },
     cxx_standard = {"": "c++2d"},
     # TODO: make linker hermetic
@@ -66,6 +72,7 @@ register_toolchains("@llvm_toolchain//:all")
 
 # Dev dependencies
 
+bazel_dep(name = "graphviz", version = "14.0.0.bcr.3", dev_dependency = True)
 bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
 bazel_dep(name = "rules_doxygen", version = "2.6.4", dev_dependency = True)
 
@@ -81,8 +88,8 @@ git_override(
 
 git_override(
     module_name = "rules_doxygen",
-    commit = "7d6dc5494458bcba9159de927af6e6677621104d",
-    remote = "https://github.com/TendTo/rules_doxygen",
+    commit = "482db671bfe9886d39831ef0e5e9e6b829f218f4",
+    remote = "https://github.com/rdong8/rules_doxygen",
 )
 
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")

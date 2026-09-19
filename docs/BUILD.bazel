@@ -8,7 +8,7 @@ load("//bazel:copy_files.bzl", "copy_files")
 # External repo layout in Bazel's sandbox can vary across configs
 # Stage the files into $(OUTDIR) instead
 copy_files(
-    name = "copy_doxygen_awesome",
+    name = "doxygen_awesome_copy",
     srcs = [
         "@doxygen_awesome//:css",
         "@doxygen_awesome//:js",
@@ -18,7 +18,7 @@ copy_files(
 doxygen(
     name = "docs",
     srcs = [
-        ":copy_doxygen_awesome",
+        ":doxygen_awesome_copy",
         "//:README.md",
     ] + glob(
         [
@@ -33,7 +33,9 @@ doxygen(
     builtin_stl_support = True,
     disable_index = False,
     distribute_group_doc = True,
+    dot_executable = "@graphviz//:dot",
     dot_image_format = "svg",
+    # buildifier: disable=external-path
     exclude_patterns = ["*/external/*"],
     extension_mapping = ["cppm=C++"],
     external_search = True,
