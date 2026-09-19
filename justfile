@@ -32,6 +32,8 @@ test *targets=targets: (bazel "test" targets)
 run target=targets: (bazel "run" target)
 
 # HACK: hedron_compile_commands doesn't support C++20 modules, have to build first
+# If this ever gets too slow, see:
+# https://github.com/helly25/bazel-compile-commands-extractor#large-projects-speeding-things-up
 [doc]
 compile_commands: (build "//src/...") (run "@hedron_compile_commands//:refresh_all")
 
