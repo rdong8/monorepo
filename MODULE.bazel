@@ -88,7 +88,7 @@ git_override(
 
 git_override(
     module_name = "rules_doxygen",
-    commit = "482db671bfe9886d39831ef0e5e9e6b829f218f4",
+    commit = "7d6dc5494458bcba9159de927af6e6677621104d",
     remote = "https://github.com/rdong8/rules_doxygen",
 )
 
