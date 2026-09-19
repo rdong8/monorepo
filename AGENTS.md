@@ -164,6 +164,7 @@ If you want to group statements by concern, use a block or immediately invoked l
 - Never rely on transitive dependencies
 - Use the fish shell for all shell targets. Use `argparse` and named arguments only.
 - Avoid the system compiler for experimentation/testing. Make a temporary bazel target to play around with, ie. [`//src/tmp:tmp`](src/tmp/BUILD.bazel)
+- For bugs in third party dependencies, we generally prefer to clone + patch + `git_override` rather than adding patches or hacking around it in the monorepo
 
 ## Testing
 
@@ -179,7 +180,5 @@ Do not write stupid tests. Examples:
 
 ## Meta
 
-- Avoid making compromises without consulting with me.
-- Avoid workarounds/hacks, again consult with me first.
-  - For example, for third party dependencies, I often prefer to patch them upstream instead of adding workarounds in my own code.
+- Avoid workarounds, hacks, and fragile code. Consult with me if you think you're making a compromise.
 - PUSH BACK if you're prompted to do something that would lead to compromises.
