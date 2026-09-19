@@ -67,6 +67,7 @@ RUN cat <<EOF >${BREWFILE}
   brew "terror/tap/just-lsp", trusted: true
   brew "trash-cli"
   brew "tree"
+  brew "uutils-coreutils"
   brew "wild-linker/wild/wild", trusted: true
   brew "wget"
   brew "zellij"
