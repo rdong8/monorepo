@@ -4,6 +4,9 @@
 // - https://code.visualstudio.com/remote/advancedcontainers/docker-options#_podman
 // - https://universal-blue.discourse.group/t/should-we-really-recommend-vscode-podman-as-supported/220/3
 {
+  //
+  // GENERAL PROPERTIES: https://containers.dev/implementors/json_reference/#general-properties
+  //
   "name": "Dev Container",
   "containerEnv": {
     // For Podman
@@ -35,6 +38,11 @@
     {
       "source": "brew",
       "target": "/home/dev/.cache/Homebrew",
+      "type": "volume"
+    },
+    {
+      "source": "linuxbrew",
+      "target": "/home/linuxbrew/.linuxbrew",
       "type": "volume"
     }
     // WARNING: it is not safe to use multiple concurrent sccache instances (ie. dev containers)
@@ -98,10 +106,12 @@
       ]
     }
   },
+  //
+  // SCENARIO SPECIFIC PROPERTIES: https://containers.dev/implementors/json_reference/#general-properties
+  //
   "build": {
     "dockerfile": "Containerfile",
     "args": {
-      "BREWFILE": "/tmp/Brewfile",
       // https://github.com/devcontainers/spec/issues/631
       // Run `id` on the host to get these
       "HOST_UID": "1000",
@@ -109,10 +119,14 @@
       "REMOTE_USER": "dev"
     }
   },
-  "initializeCommand": "cpp -P .devcontainer/Containerfiles/cpp.Containerfile.in .devcontainer/Containerfile",
-  "postStartCommand": "fish ${containerWorkspaceFolder}/.devcontainer/post_start_command.fish --Brewfile=/tmp/Brewfile",
+  "workspaceMount": "source=${localEnv:HOME}/projects,target=/home/dev/projects,type=bind,consistency=cached",
+  "workspaceFolder": "/home/dev/projects/monorepo",
   "runArgs": [
     // For Podman
     "--userns=keep-id"
-  ]
+  ],
+  //
+  // LIFECYCLE SCRIPTS: https://containers.dev/implementors/json_reference/#lifecycle-scripts
+  //
+  "postCreateCommand": "${containerEnv:HOMEBREW_PREFIX}/bin/brew bundle --file=${containerWorkspaceFolder}/brew/Brewfile"
 }

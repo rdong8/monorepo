@@ -1,0 +1,54 @@
+FROM docker.io/fedora:latest
+
+# For now, only install the following with the system package manager:
+# - Dependencies of linuxbrew itself (@development-tools, curl, file, procps-ng)
+# - gcc-c++: system toolchain needed for linuxbrew's LLVM
+# - fish: need to set user's shell when we create it
+# - stow: to install dotfiles
+# - which: to find fish for the useradd
+# - mathjax: dependency of doxygen, but not available via linuxbrew
+RUN <<EOF
+  dnf update -y
+  dnf install -y \
+    @development-tools \
+    curl \
+    file \
+    fish \
+    gcc-c++ \
+    mathjax \
+    procps-ng \
+    stow \
+    which
+  dnf clean all
+  rm -rf /var/cache/dnf
+EOF
+
+# Add user
+ARG REMOTE_USER
+ARG HOST_UID
+ARG HOST_GID
+RUN <<EOF
+  groupadd --gid ${HOST_GID} ${REMOTE_USER}
+  useradd -ms $(which fish) --uid ${HOST_UID} --gid ${HOST_GID} ${REMOTE_USER}
+EOF
+USER ${REMOTE_USER}
+# Ensure ~/.cache is owned by REMOTE_USER so volume mounts in ~/.cache don't create it as root:root
+RUN mkdir -p /home/${REMOTE_USER}/.cache
+
+# Get homebrew binary
+ENV HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
+COPY \
+  --from=ghcr.io/homebrew/brew:latest \
+  --chown=${REMOTE_USER} \
+  ${HOMEBREW_PREFIX} \
+  ${HOMEBREW_PREFIX}
+
+# Install Brew packages
+# Right now we're not using this method, we instead mount a volume
+# That way packages you install/update in the container stay when rebuilt
+# COPY brew/Brewfile /tmp/Brewfile
+# RUN \
+#   --mount=type=cache,target=${HOME}/.cache/Homebrew \
+#   --mount=type=cache,target=${HOMEBREW_PREFIX} \
+#   ${HOMEBREW_PREFIX}/bin/brew bundle --file=/tmp/Brewfile \
+#   && rm /tmp/Brewfile

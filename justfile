@@ -7,7 +7,7 @@ configs := ''
 targets := ''
 
 initialize-host:
-    sudo dnf install cpp podman
+    sudo dnf install podman
 
 # TODO: The only reason we have a .bazelversion is because fish completions can't be generated without it
 # https://github.com/bazelbuild/bazelisk/issues/718#issuecomment-3435688542

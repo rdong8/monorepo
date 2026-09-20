@@ -58,9 +58,6 @@ uv.lock
 # Python
 .venv/
 
-# Devcontainer
-.devcontainer/Containerfile
-
 # Bazel
 /bazel-*
 

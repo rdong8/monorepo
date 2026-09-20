@@ -1,7 +1,0 @@
-#include "base.Containerfile"
-
-RUN cat <<EOF >>${BREWFILE}
-  brew "bazelisk"
-  brew "buildifier"
-  brew "llvm"
-EOF

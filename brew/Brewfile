@@ -1,0 +1,29 @@
+# Common tools
+brew "bat"
+brew "btop"
+brew "cloc"
+brew "eza"
+brew "fastfetch"
+brew "fd"
+brew "fzf"
+brew "gawk"
+brew "gh"
+brew "git-delta"
+brew "helix"
+brew "jq"
+brew "just"
+brew "lldb"
+brew "prek"
+brew "ripgrep"
+brew "terror/tap/just-lsp", trusted: true
+brew "trash-cli"
+brew "tree"
+brew "uutils-coreutils"
+brew "wild-linker/wild/wild", trusted: true
+brew "wget"
+brew "zellij"
+
+# Monorepo-specific
+brew "bazelisk"
+brew "buildifier"
+brew "llvm"
