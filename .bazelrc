@@ -4,6 +4,8 @@ common --write_command_log
 
 build --verbose_failures
 
+# TODO: pass host_cxxopt too?
+
 # TODO(llvm-libc): need to undef _FORTIFY_SOURCE because glibc's fortified headers wrap some functions in inline overloads with internal linkage, which it then tries to export from a module
 # Disable layering_check (activated by preset.bazelrc) since it uses Clang modules, which are disabled when cpp_modules is enabled
 build \
@@ -51,11 +53,10 @@ build:dbg \
     --copt=-glldb \
     --cxxopt=-gmodules
 
-# WARNING: technically -march=native breaks hermeticity
 build:opt \
     --compilation_mode=opt \
     --copt=-O3 \
-    --copt=-march=native
+    --copt=-march=x86-64-v3
 
 # TODO: --features=thin_lto broken for some reason
 build:lto \
