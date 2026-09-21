@@ -1,1 +1,1 @@
-.devcontainer/Containerfiles/* linguist-language=Containerfile
+.brew/*.Brewfile linguist-language=Brewfile
