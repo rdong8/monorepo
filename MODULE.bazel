@@ -48,6 +48,12 @@ git_override(
 
 ## toolchains_llvm
 
+git_override(
+    module_name = "toolchains_llvm",
+    commit = "10c03e3b9553b14f953e7968fd85e8b2e01b32f3",
+    remote = "https://github.com/bazel-contrib/toolchains_llvm",
+)
+
 llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
 llvm.toolchain(
     # TODO: https://github.com/bazelbuild/bazel-central-registry/pull/10539
@@ -62,9 +68,9 @@ llvm.toolchain(
         ],
     },
     cxx_standard = {"": "c++2d"},
-    # TODO: make linker hermetic
-    link_flags = {"": ["--ld-path=/home/linuxbrew/.linuxbrew/bin/wild"]},
-    llvm_version = "23.1.1",
+    linker = {"": "mold"},
+    linker_version = "latest",
+    llvm_version = "23.1.2",
 )
 use_repo(llvm, "llvm_toolchain", "llvm_toolchain_llvm")
 
