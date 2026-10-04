@@ -68,3 +68,4 @@ build:profile \
     --copt=-pg
 
 build --@quill//:disable_non_prefixed_macros
+build --@quill//:std_module=@std_module

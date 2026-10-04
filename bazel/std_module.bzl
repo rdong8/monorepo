@@ -11,7 +11,10 @@ def _std_module_repo_impl(repo_context):
         fail("libc++ module directory not found at: " + libcxx_dir)
 
     repo_context.symlink(libcxx_dir.get_child("std.cppm"), "std.cppm")
-    repo_context.symlink(libcxx_dir.get_child("std"), "std")
+    std_dir = libcxx_dir.get_child("std")
+
+    for inc_file in std_dir.readdir():
+        repo_context.symlink(inc_file, "std/" + inc_file.basename)
 
     repo_context.file(
         "BUILD.bazel",
