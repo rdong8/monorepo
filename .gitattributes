@@ -1,1 +1,2 @@
+.bazelrc linguist-language=Shell
 brew/*Brewfile linguist-language=Ruby
