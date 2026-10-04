@@ -42,8 +42,8 @@ git_override(
 ## quill
 git_override(
     module_name = "quill",
-    commit = "4f8e066ed9f981bbc981851dc5a1b6de9da3a051",
-    remote = "https://github.com/rdong8/quill",
+    commit = "33250494e8b0657b3442655fe21a29e614d7745d",
+    remote = "https://github.com/odygrd/quill",
 )
 
 ## toolchains_llvm
