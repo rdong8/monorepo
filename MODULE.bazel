@@ -42,7 +42,7 @@ git_override(
 ## quill
 git_override(
     module_name = "quill",
-    commit = "33250494e8b0657b3442655fe21a29e614d7745d",
+    commit = "78c0696c5be589488d882c280796dfa06bdcd492",
     remote = "https://github.com/odygrd/quill",
 )
 
