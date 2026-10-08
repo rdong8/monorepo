@@ -597,7 +597,7 @@
     },
     "@@rules_doxygen+//:extensions.bzl%doxygen_extension": {
       "general": {
-        "bzlTransitiveDigest": "LdDQ2smzomCLWbW++Y5gwEoHpYk6VEbrH5MrbZynDgI=",
+        "bzlTransitiveDigest": "kq2/VMe4nj6q3bsQeT9aBjxATnSNlkkIJ8iudm2G9PQ=",
         "usagesDigest": "EAzx0LLgTEYABbwo29PDWm2WDGuUFlujqCPewv4nZx8=",
         "recordedInputs": [
           "REPO_MAPPING:rules_doxygen+,rules_doxygen rules_doxygen+"
