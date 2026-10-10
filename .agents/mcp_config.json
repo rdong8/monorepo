@@ -3,6 +3,12 @@
         "compiler-explorer": {
             "serverUrl": "https://godbolt.org/mcp"
         },
+        "cpu-perf": {
+            "command": "uvx",
+            "args": [
+                "cpu-perf"
+            ]
+        },
         "lldb": {
             "command": "lldb-mcp"
         }
