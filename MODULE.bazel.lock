@@ -465,7 +465,7 @@
     },
     "//bazel:llvm.bzl%llvm_raw": {
       "general": {
-        "bzlTransitiveDigest": "W3bA1h/eSwu2DVex2bc/I1U6i7NMtdUlUBm86tssdqg=",
+        "bzlTransitiveDigest": "iVue+XyZSX1HEi1sWwhT/3R6tYVNBTv3H2iXPeONwiI=",
         "usagesDigest": "xiaTXm7HGlfDwyDj34sRzaUbfO3pUh0wYcHa8cJCID0=",
         "recordedInputs": [
           "REPO_MAPPING:,bazel_tools bazel_tools"
@@ -475,8 +475,8 @@
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
             "attributes": {
               "build_file_content": "# empty",
-              "strip_prefix": "llvm-project-c82e0e904d688ace48b624422b2d6d85a83761ed",
-              "url": "https://github.com/rdong8/llvm-project/archive/c82e0e904d688ace48b624422b2d6d85a83761ed.tar.gz"
+              "strip_prefix": "llvm-project-94d961f440b18a3ab5ff782304edafac745af98a",
+              "url": "https://github.com/rdong8/llvm-project/archive/94d961f440b18a3ab5ff782304edafac745af98a.tar.gz"
             }
           }
         }
