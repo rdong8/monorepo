@@ -5,6 +5,7 @@ Always means using the most correct, most modern, most powerful tool for the job
 ## Performance
 
 - Annotate hot functions with `[[gnu::hot]]`
+- When benchmarking, use `taskset` to pin the process to a core
 
 ## Library Usage
 
