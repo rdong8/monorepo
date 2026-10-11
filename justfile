@@ -37,6 +37,8 @@ run target=targets: (bazel "run" target)
 [doc]
 compile_commands: (build "//src/...") (run "@hedron_compile_commands//:refresh_all")
 
+update-preset: (run "//:preset.update")
+
 docs: (run "//docs:serve")
 
 [doc("Tail the last Bazel invocation")]
