@@ -35,13 +35,6 @@ git_override(
     remote = "https://github.com/rdong8/cpptrace",
 )
 
-## quill
-git_override(
-    module_name = "quill",
-    commit = "78c0696c5be589488d882c280796dfa06bdcd492",
-    remote = "https://github.com/odygrd/quill",
-)
-
 ## toolchains_llvm
 
 llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
