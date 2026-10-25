@@ -69,7 +69,7 @@ bazel_dep(name = "rules_doxygen", version = "2.6.4", dev_dependency = True)
 ## TODO: use https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2977r1.html
 git_override(
     module_name = "hedron_compile_commands",
-    commit = "078ba7675c05bea2666c92d9a8abe200d8547655",
+    commit = "8e5db73091fec1f59a9ef49686b7722251765e15",
     remote = "https://github.com/helly25/bazel-compile-commands-extractor",
 )
 
