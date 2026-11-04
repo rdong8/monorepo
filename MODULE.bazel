@@ -20,7 +20,7 @@ bazel_dep(name = "quill", version = "13.1.0")
 bazel_dep(name = "rules_cc", version = "0.2.27")
 bazel_dep(name = "rules_python", version = "2.4.6")
 bazel_dep(name = "rules_shell", version = "0.8.0")
-bazel_dep(name = "toolchains_llvm", version = "1.12.0")
+bazel_dep(name = "toolchains_llvm", version = "1.13.0")
 
 # See llvm-project/utils/bazel/MODULE.bazel
 bazel_dep(name = "llvm", version = "0.8.26")
