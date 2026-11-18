@@ -172,7 +172,7 @@ template <typename Map> auto iterate(benchmark::State &state) -> void
 
         Key sum{0};
 
-        for (auto const [k, v] : m)
+        for (auto const &[k, v] : m)
         {
             sum += static_cast<Key>(v);
         }
