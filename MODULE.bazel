@@ -53,7 +53,7 @@ llvm.toolchain(
     cxx_standard = {"": "c++2d"},
     linker = {"": "mold"},
     linker_version = "latest",
-    llvm_version = "23.1.4",
+    llvm_version = "23.1.5",
 )
 use_repo(llvm, "llvm_toolchain", "llvm_toolchain_llvm")
 
