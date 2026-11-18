@@ -67,7 +67,8 @@
         // Bazel
         "BazelBuild.vscode-bazel",
         // C++
-        "llvm-vs-code-extensions.vscode-clangd",
+        "clice-io.clice",
+        // "llvm-vs-code-extensions.vscode-clangd",
         "ms-vscode.cpptools-themes",
         // CMake
         "ms-vscode.cmake-tools",
