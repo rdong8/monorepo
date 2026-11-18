@@ -1,3 +1,4 @@
+load("@llvm-project//mlir:tblgen.bzl", "gentbl_cc_library")
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 
 package(default_visibility = [
@@ -6,6 +7,15 @@ package(default_visibility = [
 ])
 
 exports_files(["BUILD.bazel"])
+
+gentbl_cc_library(
+    name = "ToyOptionsTableGen",
+    strip_include_prefix = "cli",
+    tbl_outs = {"cli/ToyOptions.inc": ["-gen-opt-parser-defs"]},
+    tblgen = "@llvm-project//llvm:llvm-min-tblgen",
+    td_file = "cli/ToyOptions.td",
+    deps = ["@llvm-project//llvm:OptParserTdFiles"],
+)
 
 cc_library(
     name = "toy",
@@ -28,7 +38,9 @@ cc_library(
         exclude = ["tests/"],
     ),
     deps = [
+        ":ToyOptionsTableGen",
         "//src/utility",
+        "@llvm-project//llvm:Option",
         "@llvm-project//llvm:Support",
         "@magic_enum",
         "@std_module",
