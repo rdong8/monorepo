@@ -4,7 +4,7 @@ module;
 #include <llvm/ADT/StringRef.h>
 #include <llvm/Support/CommandLine.h>
 
-#include "src/toy/cli/ToyOptions.hpp"
+#include "src/toy/cli/toy_options.hpp"
 
 module toy:cli.impl;
 

@@ -1,7 +1,7 @@
 module;
 
 // Required for TableGen options struct declaration; see ToyOptions.hpp for details.
-#include "src/toy/cli/ToyOptions.hpp"
+#include "src/toy/cli/toy_options.hpp"
 
 export module toy:cli;
 

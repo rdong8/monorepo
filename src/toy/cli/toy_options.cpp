@@ -1,4 +1,4 @@
-#include "src/toy/cli/ToyOptions.hpp"
+#include "src/toy/cli/toy_options.hpp"
 
 #include <llvm/Option/LibraryOptions.h>
 
