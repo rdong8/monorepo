@@ -49,9 +49,9 @@ build:dbg \
     --compilation_mode=dbg \
     --config=default_sanitizers \
     --copt=-Og \
-    --copt=-fno-omit-frame-pointer \
-    --copt=-glldb \
-    --cxxopt=-gmodules
+    --copt=-fno-omit-frame-pointer
+# TODO: https://github.com/llvm/llvm-project/issues/243801
+# --copt=-glldb
 
 # TODO: LLDB doesn't currently support dynamic debugging
 build:dbg-opt \

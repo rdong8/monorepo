@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build toyc (dbg)",
+            "type": "shell",
+            "command": "bazel",
+            "args": [
+                "build",
+                "--config=dbg",
+                "//src/toy:toyc",
+                "//src/toy/tests/integration:ast.toy_copy"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }
+    ]
+}

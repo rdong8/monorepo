@@ -1,0 +1,62 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug toyc",
+            "type": "lldb-dap",
+            // Switch to attach if you want to start the executable yourself
+            "request": "launch",
+            "program": "${workspaceFolder}/bazel-bin/src/toy/toyc",
+            "args": [
+                "${input:toycArgs}"
+            ],
+            "cwd": "${workspaceFolder}",
+            // rm if you want to build the executable yourself, in which case you should use attach mode
+            "preLaunchTask": "Build toyc (dbg)",
+            "env": {
+                "ASAN_OPTIONS": "detect_leaks=0"
+            },
+            "initCommands": [
+                "settings set target.source-map /proc/self/cwd ${workspaceFolder}"
+            ],
+            "sourceMap": [
+                [
+                    "/proc/self/cwd",
+                    "${workspaceFolder}"
+                ]
+            ]
+        },
+        {
+            "name": "Debug toyc (active file)",
+            "type": "lldb-dap",
+            "request": "launch",
+            "program": "${workspaceFolder}/bazel-bin/src/toy/toyc",
+            "args": [
+                "-emit=ast",
+                "${file}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build toyc (dbg)",
+            "env": {
+                "ASAN_OPTIONS": "detect_leaks=0"
+            },
+            "initCommands": [
+                "settings set target.source-map /proc/self/cwd ${workspaceFolder}"
+            ],
+            "sourceMap": [
+                [
+                    "/proc/self/cwd",
+                    "${workspaceFolder}"
+                ]
+            ]
+        },
+    ],
+    "inputs": [
+        {
+            "id": "toycArgs",
+            "type": "promptString",
+            "description": "Arguments for toyc",
+            "default": "-emit=ast ${workspaceFolder}/bazel-bin/src/toy/tests/integration/ast.toy"
+        }
+    ]
+}
