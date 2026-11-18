@@ -3,7 +3,7 @@ load("@rules_cc//cc:defs.bzl", "cc_test")
 cc_test(
     name = "utility",
     size = "small",
-    srcs = ["utility_test.cpp"],
+    srcs = ["utility.test.cpp"],
     linkstatic = True,
     deps = [
         "//src/toy",
