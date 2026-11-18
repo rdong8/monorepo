@@ -8,7 +8,7 @@ See:
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 def _llvm_raw_impl(_module_context):
-    COMMIT = "3fd60612d073428b4818c10f08168652e5182a89"
+    COMMIT = "82974f9bac7b8d3d2532fcaaa8378de28c7f9984"
 
     http_archive(
         name = "llvm-raw",
