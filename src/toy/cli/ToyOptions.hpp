@@ -1,7 +1,7 @@
 #pragma once
 
 /// @file ToyOptions.hpp
-/// TableGen option definitions header.
+/// @brief TableGen option definitions header.
 ///
 /// This header bridges TableGen's generated option parser with C++20 modules:
 /// 1. TableGen's OPTIONS_STRUCT_DECL unconditionally emits `#include` directives

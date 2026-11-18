@@ -1,7 +1,7 @@
 #pragma once
 
 /// @file macros.hpp
-/// Macros shared across module partitions.
+/// @brief Macros shared across module partitions.
 
 #include <cpptrace/cpptrace.hpp>
 #include <llvm/Support/raw_ostream.h>
