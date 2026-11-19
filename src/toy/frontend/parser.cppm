@@ -125,14 +125,14 @@ class Parser final
 
                 if (!values.back())
                 {
-                    return std::unexpected(nullptr);
+                    return std::unexpected{nullptr};
                 }
             }
             else
             {
                 if (self.lexer.get_current_token() != Token::Number)
                 {
-                    return std::unexpected(self.parse_error("<num> or [", "in literal expression"));
+                    return std::unexpected{self.parse_error("<num> or [", "in literal expression")};
                 }
 
                 values.push_back(self.parse_number_expr());
@@ -145,7 +145,7 @@ class Parser final
 
             if (self.lexer.get_current_token() != Token{','})
             {
-                return std::unexpected(self.parse_error("] or ,", "in literal expression"));
+                return std::unexpected{self.parse_error("] or ,", "in literal expression")};
             }
 
             std::ignore = self.lexer.get_next_token();
@@ -153,7 +153,7 @@ class Parser final
 
         if (values.empty())
         {
-            return std::unexpected(self.parse_error("<something>", "to fill literal expression"));
+            return std::unexpected{self.parse_error("<something>", "to fill literal expression")};
         }
 
         std::ignore = self.lexer.get_next_token();
@@ -611,7 +611,7 @@ class Parser final
                 std::string parameter_name{self.lexer.get_identifier()};
                 auto parameter_location = self.lexer.get_last_location();
                 self.lexer.consume(Token::Identifier);
-                arguments.push_back(
+                arguments.emplace_back(
                     std::make_unique<VariableExprAST>(std::move(parameter_location), std::move(parameter_name)));
 
                 if (self.lexer.get_current_token() != Token{','})
