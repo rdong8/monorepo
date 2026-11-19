@@ -27,3 +27,9 @@
 #define TOY_TODO(fmt, ...)                                                                                             \
     TOY_ASSERT_IMPL(false, "TODO:" fmt __VA_OPT__(, ) __VA_ARGS__);                                                    \
     std::unreachable()
+
+#if defined(NDEBUG)
+    #define TOY_ASSUME(expr, ...) [[assume(expr)]]
+#else
+    #define TOY_ASSUME(expr, ...) TOY_ASSERT(expr __VA_OPT__(, ) __VA_ARGS__)
+#endif
