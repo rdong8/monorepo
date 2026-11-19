@@ -30,7 +30,7 @@ auto parse_input_file(llvm::StringRef filename) -> toy::ASTPtr<toy::ModuleAST>
 
 auto main(int argc, char *argv[]) -> int
 {
-    auto const cli_options = toy::parse_cli(argc, argv);
+    auto const cli_options = toy::parse_cli({argv, static_cast<std::size_t>(argc)});
 
     if (!cli_options)
     {

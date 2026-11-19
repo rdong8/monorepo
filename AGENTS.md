@@ -46,7 +46,8 @@ Always means using the most correct, most modern, most powerful tool for the job
 We follow [best practices](https://chuanqixu9.github.io/c++/2025/12/30/C++20-Modules-Best-Practices.en.html#modules-native-best-practices) for C++20 modules:
 
 - A subproject should declare only 1 module, and use module partition units for multiple TUs
-- Use module implementation partition units, not module implementation units, to implement thiungs declared in the interface
+- Use module implementation partition units, not module implementation units, to implement things declared in the interface
+- Avoid unnecessary implementation units. If the implementation is brief, just leave everything in the interface unit.
 
 ### Variable Initialization
 

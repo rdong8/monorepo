@@ -30,9 +30,8 @@ class CliTest : public ::testing::Test
 
 TEST_F(CliTest, ParsesDefaultOptions)
 {
-    std::array<char const *, 1> const arguments{"toyc"};
-
-    auto const options = parse_cli(static_cast<int>(arguments.size()), const_cast<char **>(arguments.data()));
+    auto constexpr ARGUMENTS = std::to_array({"toyc"});
+    auto const options = parse_cli(ARGUMENTS);
 
     ASSERT_TRUE(options.has_value());
     EXPECT_EQ(options->input_filename, "-");
@@ -41,9 +40,8 @@ TEST_F(CliTest, ParsesDefaultOptions)
 
 TEST_F(CliTest, ParsesInputFilename)
 {
-    std::array<char const *, 2> const arguments{"toyc", "foo.toy"};
-
-    auto const options = parse_cli(static_cast<int>(arguments.size()), const_cast<char **>(arguments.data()));
+    auto constexpr ARGUMENTS = std::to_array({"toyc", "foo.toy"});
+    auto const options = parse_cli(ARGUMENTS);
 
     ASSERT_TRUE(options.has_value());
     EXPECT_EQ(options->input_filename, "foo.toy");
@@ -52,9 +50,8 @@ TEST_F(CliTest, ParsesInputFilename)
 
 TEST_F(CliTest, ParsesEmitAstOption)
 {
-    std::array<char const *, 3> const arguments{"toyc", "foo.toy", "-emit=ast"};
-
-    auto const options = parse_cli(static_cast<int>(arguments.size()), const_cast<char **>(arguments.data()));
+    auto constexpr ARGUMENTS = std::to_array({"toyc", "foo.toy", "-emit=ast"});
+    auto const options = parse_cli(ARGUMENTS);
 
     ASSERT_TRUE(options.has_value());
     EXPECT_EQ(options->input_filename, "foo.toy");
@@ -63,9 +60,8 @@ TEST_F(CliTest, ParsesEmitAstOption)
 
 TEST_F(CliTest, ParsesEmitAstSeparateOption)
 {
-    std::array<char const *, 4> const arguments{"toyc", "foo.toy", "-emit", "ast"};
-
-    auto const options = parse_cli(static_cast<int>(arguments.size()), const_cast<char **>(arguments.data()));
+    auto constexpr ARGUMENTS = std::to_array({"toyc", "foo.toy", "-emit", "ast"});
+    auto const options = parse_cli(ARGUMENTS);
 
     ASSERT_TRUE(options.has_value());
     EXPECT_EQ(options->input_filename, "foo.toy");
