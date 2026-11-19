@@ -5,7 +5,7 @@ package(default_visibility = ["//visibility:private"])
 cc_test(
     name = "mathematics",
     size = "small",
-    srcs = ["mathematics.cpp"],
+    srcs = ["mathematics.test.cpp"],
     deps = [
         "//src/library_usage:library_usage.mathematics",
         "@googletest//:gtest",
